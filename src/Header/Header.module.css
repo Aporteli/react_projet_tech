@@ -1,0 +1,62 @@
+/* Header.module.css */
+.customHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+/* 1. როცა გვერდი იტვირთება ან სქროლი 0-ზეა */
+.visible {
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 2. როცა პირველად ვიწყებთ დაბლა სქროლვას (თანაბრად, ნელ-ნელა იმალება) */
+.hidden {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 3. როცა დაბლა ჩავცდებით და ჰიდერი ზემოდან რბილი ანიმაციით ჩამოდის */
+.sticky {
+  transform: translateY(0);
+  animation: slideDown 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ანიმაცია ზემოდან ჩამოსვლისთვის */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* დამატებითი ელემენტები */
+.logo {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #4f46e5;
+}
+
+.navigation a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: #4b5563;
+  transition: color 0.2s;
+}
+
+.navigation a:hover {
+  color: #4f46e5;
+}
