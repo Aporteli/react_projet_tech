@@ -1,0 +1,113 @@
+.filterGridDropDownItem {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.filterGridDropDownItem12 {
+  border-radius: 0px 0px 10px 10px;
+}
+
+.filterGridDropDownItem:hover {
+  cursor: pointer;
+  background-color: #f5f5f5;
+}
+
+.filterGridDropDownItemName {
+  font-size: 16px;
+}
+
+@media (max-width: 1024px) {
+  .filterGridDropDownItemName {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filterGridDropDownItemName {
+    font-size: 13px;
+  }
+}
+
+.filterGridDropDownItemContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  padding: 20px 20px;
+}
+
+@media (max-width: 1024px) {
+  .filterGridDropDownItemContent {
+    padding: 15px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .filterGridDropDownItemContent {
+    padding: 12px 12px;
+  }
+}
+
+.filterGridDropDownItemList {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  opacity: 0;
+  transition:
+    max-height 0.3s ease-in-out,
+    padding 0.3s ease-in-out,
+    opacity 0.2s ease;
+}
+
+.filterGridDropDownItemListActive.filterGridDropDownItemList {
+  max-height: 180px;
+  overflow-y: auto !important;
+  padding: 10px 20px 15px 20px;
+  opacity: 1;
+  gap: 22px;
+  scrollbar-width: thin !important;
+  scrollbar-color: #7f56d9 transparent !important;
+}
+
+.filterCheckboxItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+.filterCheckboxItem:last-child {
+  margin-bottom: 0;
+}
+
+.filterGridDropDownItemList :global(.os-scrollbar-handle) {
+  background: #7f56d9 !important;
+  border-radius: 10px !important;
+}
+
+.filterGridDropDownItemList :global(.os-scrollbar-handle:hover) {
+  background: #7f56d9 !important;
+}
+
+.filterGridDropDownItemList :global(.os-scrollbar-vertical) {
+  width: 3px !important;
+  padding: 0 !important;
+}
+
+.filterGridDropDownItemList :global(.os-scrollbar-track) {
+  background: transparent !important;
+}
+
+.filterCheckboxInput {
+  width: 15px;
+  height: 15px;
+}

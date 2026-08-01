@@ -4,7 +4,12 @@
     "welcome": "Welcome to our electronics store!",
     "searchPlaceholder": "Search tech...",
     "cart": "Cart",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "modal": {
+      "searchByCategory": "Search by Category",
+      "searched": "Searched",
+      "clear": "Clear"
+    }
   },
   "tooltip": {
     "cart": {
@@ -457,6 +462,12 @@
     "priceDecrese": "Price: decreasing",
     "priceIncrease": "Price: increasing",
     "name": "Name: A-Z",
-    "nameReverse": "Name: Z-A"
+    "nameReverse": "Name: Z-A",
+    "filter": "Filter"
+  },
+  "layout": {
+    "blog": "Blog",
+    "shops": "Shops",
+    "allPromotions": "All Promotions"
   }
 }

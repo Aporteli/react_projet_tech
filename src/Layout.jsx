@@ -3,8 +3,10 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import styles from "./layout.module.css";
 import { FaPhoneAlt } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function Layout() {
+  const { t } = useTranslation();
   return (
     <>
       <div className={styles.container}>
@@ -18,9 +20,11 @@ function Layout() {
                   <FaPhoneAlt /> *3838 / (032) 222-22-22
                 </p>
                 <div className={styles.subheaderLinks}>
-                  <p className={styles.subheaderLink}>Blog</p>
-                  <p className={styles.subheaderLink}>Shops</p>
-                  <p className={styles.subheaderLink}>All Promotions</p>
+                  <p className={styles.subheaderLink}>{t("layout.blog")}</p>
+                  <p className={styles.subheaderLink}>{t("layout.shops")}</p>
+                  <p className={styles.subheaderLink}>
+                    {t("layout.allPromotions")}
+                  </p>
                 </div>
               </div>
               <div className={styles.movingDivider}></div>

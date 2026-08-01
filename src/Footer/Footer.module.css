@@ -10,6 +10,24 @@
   justify-content: space-between;
 }
 
+@media (max-width:1180px) {
+  body {
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 0.6rem;
+  }
+}
+
 .footerContentTop {
   display: flex;
   justify-content: space-between;
@@ -20,9 +38,49 @@
   padding: 10px 220px 20px 0px;
 }
 
+@media (max-width: 1024px) {
+  .footerContentTop {
+    padding: 10px 150px 20px 0px;
+  }
+}
+
+@media (max-width: 934px) {
+  .footerContentTop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 15px 20px;
+    gap: 25px;
+  }
+}
+
+@media (max-width: 549px) {
+  .footerContentTop {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTop {
+    padding: 12px 15px;
+    gap: 20px;
+  }
+}
+
 .footerContentTopItemTitle {
   margin-bottom: 10px;
   text-align: left;
+}
+
+@media (max-width: 768px) {
+  .footerContentTopItemTitle {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTopItemTitle {
+    margin-bottom: 6px;
+  }
 }
 
 .divider {
@@ -33,6 +91,18 @@
   background: linear-gradient(90deg, #422ec5 0%, #3acbe8 50%, #422ec5 100%);
   background-size: 200% 100%;
   animation: moveGradient 1s linear infinite alternate;
+}
+
+@media (max-width: 768px) {
+  .divider {
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .divider {
+    margin: 12px 0;
+  }
 }
 
 @keyframes moveGradient {
@@ -51,6 +121,18 @@
   gap: 0.5rem;
   justify-content: center;
   align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .footerContentTopItemLinks {
+    gap: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTopItemLinks {
+    gap: 0.3rem;
+  }
 }
 
 /* სტილი ლინკებისთვის */
@@ -82,6 +164,24 @@
   -webkit-text-fill-color: transparent;
 }
 
+@media (max-width: 768px) {
+  .footerContentTopItemLink {
+    padding: 4px 0;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTopItemLink {
+    padding: 3px 0;
+    gap: 6px;
+    margin-bottom: 3px;
+    font-size: 11px;
+  }
+}
+
 .footerContentTopItemLink:hover {
   cursor: pointer;
 
@@ -90,6 +190,18 @@
 
   /* ტრანსფორმაცია რჩება ისევე, როგორც გქონდა */
   transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+  .footerContentTopItemLink:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTopItemLink:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .movingDivider {
@@ -102,6 +214,18 @@
   animation: moveGradient 1s linear infinite alternate;
 }
 
+@media (max-width: 768px) {
+  .movingDivider {
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .movingDivider {
+    margin: 12px 0;
+  }
+}
+
 @keyframes moveGradient {
   0% {
     background-position: 100% 0%;
@@ -112,20 +236,56 @@
 }
 
 .footerContentBottom {
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
-    font-size: 15px;
-    padding-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  font-size: 15px;
+  padding-bottom: 10px;
+}
+
+@media (max-width: 1024px) {
+  .footerContentBottom {
+    padding-left: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footerContentBottom {
+    padding: 0 20px 15px 20px;
+    font-size: 14px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentBottom {
+    padding: 0 15px 12px 15px;
+    font-size: 13px;
+  }
 }
 
 .footerContentTopItemLinkIcon {
-   background-color: #6c5dd3;
-   padding: 5px;
-   width: 25px;
-   height: 25px;
-   border-radius: 50px;
+  background-color: #6c5dd3;
+  padding: 5px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50px;
 }
 
+@media (max-width: 768px) {
+  .footerContentTopItemLinkIcon {
+    padding: 4px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContentTopItemLinkIcon {
+    padding: 3px;
+    width: 20px;
+    height: 20px;
+  }
+}

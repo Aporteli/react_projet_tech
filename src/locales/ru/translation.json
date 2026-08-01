@@ -4,7 +4,12 @@
     "welcome": "Добро пожаловать в наш магазин электроники!",
     "searchPlaceholder": "Поиск техники...",
     "cart": "Корзина",
-    "signIn": "Войти"
+    "signIn": "Войти",
+    "modal": {
+      "searchByCategory": "Поиск по категории",
+      "searched": "Поиск",
+      "clear": "Очистить"
+    }
   },
   "tooltip": {
     "cart": {
@@ -466,6 +471,12 @@
     "priceDecrese": "Цена: убывание",
     "priceIncrease": "Цена: возрастание",
     "name": "Имя: A-Z",
-    "nameReverse": "Имя: Z-A"
+    "nameReverse": "Имя: Z-A",
+    "filter": "Фильтр"
+  },
+  "layout": {
+    "blog": "Блог",
+    "shops": "Магазины",
+    "allPromotions": "Все акции"
   }
 }

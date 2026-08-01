@@ -1,9 +1,5 @@
 import styles from "./subCategoryPage.module.css";
-import "overlayscrollbars/overlayscrollbars.css";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
-import HeartIconLight from "../../icons/heartIconLight";
-import { ShoppingCart, RefreshCw } from "lucide-react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   fetchSubCategories,
@@ -11,14 +7,23 @@ import {
   fetchCategoryBrands,
 } from "../../api/categoryService";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import PriceFilter from "../../components/priceFilter";
+import ProductCard from "./components/productCard/productCard";
+import FilterDropdown from "./components/filterDropdown/filterDropdown";
+import MobileFilter from "./components/mobileFilter/mobileFilter";
+import SortDropdown from "./components/sortDropdown/sortDropdown";
+import Breadcrumb from "./components/breadcrumb/breadcrumb";
+import MobileFilters from "./components/mobileFilters/mobileFilters";
 import "rc-slider/assets/index.css";
 
 const BASE_URL = "http://localhost:5001";
 
 export default function SubCategoryPage() {
   const sortRef = useRef(null);
+  const mobileSortRef = useRef(null);
+  const mobileFilterRef = useRef(null);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [visibleCount, setVisibleCount] = useState(16);
   const [openDropDowns, setOpenDropDowns] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -30,6 +35,17 @@ export default function SubCategoryPage() {
   const { t, i18n } = useTranslation();
   const { slug } = useParams();
   const ITEMS_PER_GROUP = 16;
+
+  const handleWindowResize = () => {
+    setWindowWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
 
   const handleSeeMore = () => {
     setVisibleCount((prevCount) => prevCount + ITEMS_PER_GROUP);
@@ -52,8 +68,8 @@ export default function SubCategoryPage() {
 
   const sortTypes = [
     { id: "all", label: t("sort.title") },
-    { id: "priceAsc", label: t("sort.priceDecrese") },
-    { id: "priceDesc", label: t("sort.priceIncrease") },
+    { id: "priceAsc", label: t("sort.priceIncrease") },
+    { id: "priceDesc", label: t("sort.priceDecrese") },
     { id: "nameAsc", label: t("sort.name") },
     { id: "nameDesc", label: t("sort.nameReverse") },
   ];
@@ -99,7 +115,7 @@ export default function SubCategoryPage() {
     };
   }, [slug, i18n.language]);
 
-  console.log(screenAttributes);
+  console.log(screenAttributes, "screenAttributes");
 
   // 4. Fetch brands data
   useEffect(() => {
@@ -116,11 +132,23 @@ export default function SubCategoryPage() {
     };
   }, [slug]);
 
-  // Click Outside logic for sort dropdown
+  // Click Outside logic for sort dropdown and mobile filter
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sortRef.current && !sortRef.current.contains(event.target)) {
         setSortOptions(false);
+      }
+      if (
+        mobileSortRef.current &&
+        !mobileSortRef.current.contains(event.target)
+      ) {
+        setSortOptions(false);
+      }
+      if (
+        mobileFilterRef.current &&
+        !mobileFilterRef.current.contains(event.target)
+      ) {
+        setMobileFilterOpen(false);
       }
     };
 
@@ -129,6 +157,19 @@ export default function SubCategoryPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Disable body scroll when mobile filter is open
+  useEffect(() => {
+    if (mobileFilterOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [mobileFilterOpen]);
 
   // 5. ბექენდის ახალი filters ობიექტის გადაყვანა მასივში
   const formattedFilters = useMemo(() => {
@@ -195,6 +236,10 @@ export default function SubCategoryPage() {
     console.log(attrName, value, isChecked);
   };
 
+  const handleToggleMobileFilter = () => {
+    setMobileFilterOpen(!mobileFilterOpen);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.gridContainer}>
@@ -206,202 +251,74 @@ export default function SubCategoryPage() {
           <div className={styles.filterGridDropDown}>
             {formattedFilters.map((attribute, index) => {
               const isOpen = openDropDowns.includes(index);
-
               return (
-                <div
+                <FilterDropdown
                   key={attribute.attribute_name || index}
-                  className={`${styles.filterGridDropDownItem} ${
-                    styles[`filterGridDropDownItem${index}`]
-                  }`}
-                  onClick={() => toggleDropDown(index)}
-                >
-                  <div className={styles.filterGridDropDownItemContent}>
-                    <p className={styles.filterGridDropDownItemName}>
-                      {attribute.attribute_name}
-                    </p>
-                    <IoIosArrowDown />
-                  </div>
-
-                  <OverlayScrollbarsComponent
-                    element="div"
-                    options={{
-                      scrollbars: {
-                        autoHide: "leave",
-                        theme: "os-theme-dark",
-                      },
-                    }}
-                    className={`${styles.filterGridDropDownItemList} ${
-                      isOpen ? styles.filterGridDropDownItemListActive : ""
-                    }`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {attribute.options && attribute.options.length > 0 ? (
-                      attribute.options.map((option, optIndex) => {
-                        const optValue =
-                          typeof option === "object"
-                            ? option.id || option.name
-                            : option;
-                        const optLabel =
-                          typeof option === "object" ? option.name : option;
-
-                        return (
-                          <label
-                            key={optIndex}
-                            className={styles.filterCheckboxItem}
-                          >
-                            <input
-                              type="checkbox"
-                              value={optValue}
-                              onChange={(e) =>
-                                handleFilterChange(
-                                  attribute.attribute_name,
-                                  optValue,
-                                  e.target.checked,
-                                )
-                              }
-                            />
-                            <span>{optLabel}</span>
-                          </label>
-                        );
-                      })
-                    ) : (
-                      <p>მონაცემები არ არის</p>
-                    )}
-                  </OverlayScrollbarsComponent>
-                </div>
+                  attribute={attribute}
+                  index={index}
+                  isOpen={isOpen}
+                  onToggle={toggleDropDown}
+                  onFilterChange={handleFilterChange}
+                />
               );
             })}
           </div>
         </div>
 
+        {windowWidth < 712 && (
+          <MobileFilters
+            sortType={sortType}
+            sortTypes={sortTypes}
+            selectedOption={selectedOption}
+            sortOptions={sortOptions}
+            onToggleSort={() => setSortOptions(!sortOptions)}
+            onSelectSort={handleSelectSort}
+            onToggleFilter={handleToggleMobileFilter}
+            t={t}
+            mobileSortRef={mobileSortRef}
+          />
+        )}
+
+        <MobileFilter
+          isOpen={mobileFilterOpen && windowWidth < 712}
+          onClose={() => setMobileFilterOpen(false)}
+          onPriceChange={handlePriceChange}
+          formattedFilters={formattedFilters}
+          openDropDowns={openDropDowns}
+          onToggle={toggleDropDown}
+          onFilterChange={handleFilterChange}
+          t={t}
+        />
+
         <div className={styles.productsGrid}>
-          <p className={styles.breadcrumb}>
-            Home Page
-            <IoIosArrowForward />
-            {subCategories[0]?.parentCategory}
-            <IoIosArrowForward />
-            {subCategories[0]?.subCategory}
-          </p>
+          <Breadcrumb
+            parentCategory={subCategories[0]?.parentCategory}
+            subCategory={subCategories[0]?.subCategory}
+          />
           <div className={styles.subCategoryHeader}>
             <h1 className={styles.subCategoryTitle}>
               {subCategories[0]?.subCategory}
             </h1>
 
-            <div className={styles.arrangeContainer} ref={sortRef}>
-              <div
-                className={styles.arrangeContent}
-                onClick={() => setSortOptions(!sortOptions)}
-              >
-                <p className={styles.arrangeText}>{selectedOption.label}</p>
-                <IoIosArrowDown />
-              </div>
-
-              {sortOptions && (
-                <div className={styles.sortOptionsContainer}>
-                  <div className={styles.sortOptions}>
-                    <div
-                      className={styles.sortOption}
-                      onClick={() => handleSelectSort("all")}
-                    >
-                      {t("sort.all")}
-                    </div>
-                    <div
-                      className={styles.sortOption}
-                      onClick={() => handleSelectSort("priceDesc")}
-                    >
-                      {t("sort.priceDecrese")}
-                    </div>
-                    <div
-                      className={styles.sortOption}
-                      onClick={() => handleSelectSort("priceAsc")}
-                    >
-                      {t("sort.priceIncrease")}
-                    </div>
-                    <div
-                      className={styles.sortOption}
-                      onClick={() => handleSelectSort("nameAsc")}
-                    >
-                      {t("sort.name")}
-                    </div>
-                    <div
-                      className={styles.sortOption}
-                      onClick={() => handleSelectSort("nameDesc")}
-                    >
-                      {t("sort.nameReverse")}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {windowWidth >= 712 && (
+              <SortDropdown
+                sortType={sortType}
+                sortTypes={sortTypes}
+                selectedOption={selectedOption}
+                isOpen={sortOptions}
+                onToggle={() => setSortOptions(!sortOptions)}
+                onSelect={handleSelectSort}
+                t={t}
+              />
+            )}
           </div>
 
           <div className={styles.mainDiv}>
             <div className={styles.outerDiv}>
               <div className={styles.sliderDiv}>
-                {sortedProducts.slice(0, visibleCount).map((product, index) => {
-                  const currentP =
-                    Number(product.discountPrice) &&
-                    Number(product.discountPrice) < Number(product.price)
-                      ? Number(product.discountPrice)
-                      : Number(product.price);
-
-                  return (
-                    <div key={index} className={styles.flexDiv}>
-                      <Link className={styles.card}>
-                        <div className={styles.cardImageContainer}>
-                          <div className={styles.buttonsContainer}>
-                            <button
-                              className={styles.compareBtn}
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <RefreshCw size={18} />
-                            </button>
-                            <button className={styles.heartBtn}>
-                              <HeartIconLight />
-                            </button>
-                          </div>
-                          <img
-                            className={styles.cardImage}
-                            src={`${BASE_URL}/uploads/${product.image}`}
-                            alt={product.name}
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className={styles.cardContent}>
-                          <h4 className={styles.productName}>{product.name}</h4>
-                          <div className={styles.priceSection}>
-                            <div className={styles.priceContainer}>
-                              <span className={styles.currentPrice}>
-                                {currentP} ₾
-                              </span>
-                              {product.discountPrice &&
-                                Number(product.discountPrice) <
-                                  Number(product.price) && (
-                                  <span className={styles.oldPrice}>
-                                    {Number(product.price)} ₾
-                                  </span>
-                                )}
-                            </div>
-                          </div>
-                          <div className={styles.actionButtons}>
-                            <button
-                              className={styles.addToCartBtn}
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <ShoppingCart size={15} />
-                            </button>
-                            <button
-                              className={styles.buyNowBtn}
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              {t("discountSlider.buyNow")}
-                            </button>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  );
-                })}
+                {sortedProducts.slice(0, visibleCount).map((product, index) => (
+                  <ProductCard key={index} product={product} t={t} />
+                ))}
               </div>
               {/* 3. See More ღილაკი — გამოჩნდება მხოლოდ მაშინ, თუ კიდევ დარჩა დასამალი პროდუქტები */}
               {visibleCount < sortedProducts.length && (

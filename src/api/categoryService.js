@@ -48,21 +48,6 @@ export async function fetchSubCategories(slug,lang) {
   }
 }
 
-// Used in subCategoryPage.jsx
-// export async function fetchSubCateogryScreenAttributes(slug,lang) {
-//   try {
-//     if (!slug) return [];
-//     const response = await fetch(
-//       `${BASE_URL}/categories/screen_attribute/${slug}?lang=${lang}`,
-//     );
-//     if (!response.ok) throw new Error("Cannot find sub category slug");
-//     return await response.json();
-//   } catch (error) {
-//     console.error("fetchsubCategorySlugs error:", error);
-//     throw error;
-//   }
-// }
-
 
 // Used in subCategoryPage.jsx
 export async function fetchCategoryBrands(slug) {

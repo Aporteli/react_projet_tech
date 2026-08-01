@@ -3,7 +3,15 @@ import styles from "./Header.module.css"; // შემოგვაქვს რ�
 import CartIcon from "../icons/cartIcon.jsx";
 import HeartIcon from "../icons/heartIcon.jsx";
 import CompareIcon from "../icons/compareIcon.jsx";
-import { FiUser, FiMenu } from "react-icons/fi";
+import { FaX } from "react-icons/fa6";
+import {
+  FiUser,
+  FiMenu,
+  FiHome,
+  FiShoppingCart,
+  FiPercent,
+  FiHeart,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
 import SiteLogo from "../icons/siteLogo.jsx";
 import SearchIcon from "../icons/searchIcon.jsx";
@@ -110,19 +118,19 @@ function HeaderDesktop() {
                 >
                   <div className={styles.modalSearchInput}>
                     <div className={styles.modalSearchInputTitle}>
-                      Search by Category
+                      {t("header.modal.searchByCategory")}
                     </div>
                     <div className={styles.modalSearchInputCategory}></div>
                   </div>
                   <div className={styles.modalSearchOutput}>
                     <div className={styles.modalSearchOutputHeader}>
                       <div className={styles.modalSearchOutputHeaderTitle}>
-                        Searched
+                        {t("header.modal.searched")}
                       </div>
                       <div className={styles.modalSearchOutputHeaderClear}>
                         <GrClearOption />
                         <p className={styles.modalSearchOutputHeaderTitleClear}>
-                          Clear
+                          {t("header.modal.clear")}
                         </p>
                       </div>
                     </div>
@@ -234,9 +242,39 @@ function HeaderDesktop() {
 /* Header for tablets */
 
 function HeaderTablet() {
+  const { t, i18n } = useTranslation();
   const [headerState, setHeaderState] = useState("visible");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [lengDropdounOpen, setLengDropdounOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || "en");
   const lastScrollY = useRef(0);
   const headerHeight = 80;
+
+  const toggleLanguageDropdown = () => {
+    setLengDropdounOpen(!lengDropdounOpen);
+  };
+
+  const changeLanguage = (lng) => {
+    setCurrentLanguage(lng);
+    i18n.changeLanguage(lng);
+  };
+
+  const openModalHandler = () => {
+    setOpenModal(true);
+  };
+
+  const closeModalHandler = () => {
+    setOpenModal(false);
+  };
+
+  useEffect(() => {
+    if (openModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [openModal]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -273,31 +311,164 @@ function HeaderTablet() {
     };
   }, [headerState]);
 
+  useEffect(() => {
+    if (categoryOpen) {
+      document.body.style.overflow = "hidden"; // თიშავს ძირითად სქროლს
+    } else {
+      document.body.style.overflow = "unset"; // აბრუნებს სქროლს დახურვისას
+    }
+
+    // კომპონენტის წაშლისას (Cleanup)
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [categoryOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setCategoryOpen(false);
+      }
+    };
+
+    if (categoryOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [categoryOpen]);
+
   // დინამიურად ვადგენთ აქტიურ კლასს styles ობიექტიდან
   const activeClass = styles[headerState];
 
   return (
     <>
-      <div className={styles.headerSpacer}></div>
-      <div className={styles.headerContainer}>
-        <header className={`${styles.customHeaderTablet} ${activeClass}`}>
-          <div className={styles.headerContentTablet}>
-            <button className={styles.categoriesButtonTablet}>
-              <FiMenu className={styles.menuIcon} />
+      <div className={styles.tabletHeaderSpacer}></div>
+      <div className={styles.tabletHeaderContainer}>
+        <header className={`${styles.tabletHeader} ${activeClass}`}>
+          {openModal && (
+            <>
+              <div className={styles.modalOverlay} onClick={closeModalHandler}>
+                <div
+                  className={styles.modalContent}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  <div className={styles.modalSearchInput}>
+                    <div className={styles.modalSearchInputTitle}>
+                      {t("header.modal.searchByCategory")}
+                    </div>
+                    <div className={styles.modalSearchInputCategory}></div>
+                  </div>
+                  <div className={styles.modalSearchOutput}>
+                    <div className={styles.modalSearchOutputHeader}>
+                      <div className={styles.modalSearchOutputHeaderTitle}>
+                        {t("header.modal.searched")}
+                      </div>
+                      <div className={styles.modalSearchOutputHeaderClear}>
+                        <GrClearOption />
+                        <p className={styles.modalSearchOutputHeaderTitleClear}>
+                          {t("header.modal.clear")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={styles.modalSearchOutputResults}></div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          <div className={styles.tabletHeaderContent}>
+            <button
+              className={styles.tabletCategoriesButton}
+              onClick={() => setCategoryOpen(!categoryOpen)}
+            >
+              <FiMenu className={styles.tabletMenuIcon} />
             </button>
-            <button className={styles.logoButton}>
+            <button className={styles.tabletLogoButton}>
               <SiteLogo />
             </button>
 
-            <div className={styles.headerActionsTablet}>
-              <button className={styles.searchBarTablet}>
+            <div className={styles.tabletHeaderActions}>
+              <button
+                className={styles.tabletSearchButton}
+                onClick={openModalHandler}
+              >
                 <IoIosSearch />
               </button>
-              <button className={styles.languageButtonTablet}>ENG</button>
+              <div className={styles.tabletLanguageContainer}>
+                <button
+                  className={styles.tabletLanguageButton}
+                  onClick={toggleLanguageDropdown}
+                >
+                  {currentLanguage === "en" ? "ENG" : "RUS"}
+                </button>
+
+                <button
+                  className={`
+                      ${styles.tabletLanguageDropdownButton} 
+                      ${lengDropdounOpen ? styles.tabletLanguageDropdownButtonOpen : ""}
+                    `}
+                  onClick={() => {
+                    changeLanguage(currentLanguage === "en" ? "ru" : "en");
+                    toggleLanguageDropdown();
+                  }}
+                >
+                  {currentLanguage === "en" ? "RUS" : "ENG"}
+                </button>
+              </div>
             </div>
           </div>
         </header>
       </div>
+      <div className={styles.bottomNav}>
+        <Link to="/" className={styles.bottomNavItem}>
+          <FiHome className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Home</span>
+        </Link>
+        <Link to="/cart" className={styles.bottomNavItem}>
+          <FiShoppingCart className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Cart</span>
+        </Link>
+        <Link to="/promotions" className={styles.bottomNavItem}>
+          <FiPercent className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Promotions</span>
+        </Link>
+        <Link to="/wishlist" className={styles.bottomNavItem}>
+          <FiHeart className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Saved</span>
+        </Link>
+        <Link to="/signin" className={styles.bottomNavItem}>
+          <FiUser className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Sign In</span>
+        </Link>
+      </div>
+
+      {categoryOpen && (
+        <div
+          className={styles.tabletCategoryPanel}
+          onClick={() => setCategoryOpen(false)}
+        >
+          <div
+            className={styles.tabletCategoryPanelContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.tabletCategoryPanelHeader}>
+              <h2 className={styles.tabletCategoryPanelTitle}>Categories</h2>
+              <button
+                className={styles.tabletCategoryPanelClose}
+                onClick={() => setCategoryOpen(false)}
+              >
+                <FaX />
+              </button>
+            </div>
+            <CategoriesDropdown />
+          </div>
+        </div>
+      )}
     </>
   );
 }
