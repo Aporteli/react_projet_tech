@@ -1,7 +1,131 @@
 .footer {
-    background-color: #000;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-    height: 100px;
+  background-color: rgb(19, 17, 36);
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  height: auto;
+  border-top: 3px solid #6c5dd3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
+.footerContentTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1250px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 10px 220px 20px 0px;
+}
+
+.footerContentTopItemTitle {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  border: none;
+  margin: 20px 0;
+  background: linear-gradient(90deg, #422ec5 0%, #3acbe8 50%, #422ec5 100%);
+  background-size: 200% 100%;
+  animation: moveGradient 1s linear infinite alternate;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.footerContentTopItemLinks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* სტილი ლინკებისთვის */
+
+.footerContentTopItemLink {
+  text-decoration: none;
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  transition:
+    transform 0.3s ease,
+    background-position 0.4s ease; /* ვამატებთ background-position-ის ანიმაციას */
+
+  /* 1. ვქმნით ორფეროვან გრადიენტს: მარცხენა ნახევარი თეთრია, მარჯვენა იისფერი */
+  background: linear-gradient(to right, #6c5dd3 50%, #ffffff 50%);
+
+  /* 2. ვზრდით ფონის ზომას ორმაგად (200%), რომ საწყის ეტაპზე მხოლოდ თეთრი მხარე ჩანდეს */
+  background-size: 200% 100%;
+
+  /* 3. ფონის საწყის პოზიციას ვაყენებთ მარჯვნივ (ანუ ჩანს თეთრი ფერი) */
+  background-position: 100% 0;
+
+  /* 4. ჯადოსნური თვისებები: გრადიენტს ვაჭრით ზუსტად ტექსტის ფორმაზე, თავად ტექსტს კი ვხდით გამჭვირვალეს */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footerContentTopItemLink:hover {
+  cursor: pointer;
+
+  /* ჰოვერზე ფონს გადმოვაჩოჩებთ მარცხნივ (0 პოზიციაზე), რაც შემოიყვანს იისფერ ფერს მარცხნიდან მარჯვნივ */
+  background-position: 0 0;
+
+  /* ტრანსფორმაცია რჩება ისევე, როგორც გქონდა */
+  transform: translateY(-5px);
+}
+
+.movingDivider {
+  width: 100%;
+  height: 2px;
+  border: none;
+  margin: 20px 0;
+  background: linear-gradient(90deg, #422ec5 0%, #3acbe8 50%, #422ec5 100%);
+  background-size: 200% 100%;
+  animation: moveGradient 1s linear infinite alternate;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.footerContentBottom {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    font-size: 15px;
+    padding-bottom: 10px;
+}
+
+.footerContentTopItemLinkIcon {
+   background-color: #6c5dd3;
+   padding: 5px;
+   width: 25px;
+   height: 25px;
+   border-radius: 50px;
+}
+

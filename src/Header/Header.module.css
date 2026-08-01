@@ -1,39 +1,274 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
 /* Header.module.css */
+.headerContainer {
+  /* border: 2px solid red; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: transparent;
+  width: 100%;
+}
+
+.headerSpacer {
+  height: 80px;
+}
+
 .customHeader {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  margin: 0 auto;
   width: 100%;
   height: 80px;
   background-color: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
   box-sizing: border-box;
+  z-index: 1001;
 }
 
-/* 1. როცა გვერდი იტვირთება ან სქროლი 0-ზეა */
+.headerContent {
+  /* border: 2px solid red; */
+  height: 100%;
+  width: 100%;
+  max-width: 1230px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .visible {
   transform: translateY(0);
   transition: transform 0.3s ease-in-out;
 }
 
-/* 2. როცა პირველად ვიწყებთ დაბლა სქროლვას (თანაბრად, ნელ-ნელა იმალება) */
 .hidden {
   transform: translateY(-100%);
-  transition: transform 0.3s ease-in-out;
 }
 
-/* 3. როცა დაბლა ჩავცდებით და ჰიდერი ზემოდან რბილი ანიმაციით ჩამოდის */
 .sticky {
   transform: translateY(0);
   animation: slideDown 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* ანიმაცია ზემოდან ჩამოსვლისთვის */
+.searchBar {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 50px;
+  min-width: 400px;
+  max-width: 400px;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+  margin-right: 30px;
+}
+
+.searchBar:focus-within {
+  border-color: #4f46e5;
+  background-color: #ffffff;
+}
+
+/* თავად ინპუტი */
+.searchInput {
+  width: 100%;
+  height: 35px;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  outline: none;
+}
+.searchBar.searchBarOpen {
+  position: relative;
+  z-index: 1500;
+}
+
+.searchIcon {
+  width: 35px;
+  height: 35px;
+}
+
+.headerCart {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.cartIconWrapper {
+  position: relative;
+}
+
+.iconLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #4b5563;
+}
+
+.iconLink:hover {
+  transform: scale(1.2) translateY(-3px);
+  color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.1);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.iconLink:active {
+  transform: scale(1.1) translateY(-1px);
+}
+
+.headerActions {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/*___________________________________________________________________________________________________
+
+   Language container styles
+_____________________________________________________________________________________________________
+ */
+
+.loginButton {
+  color: #4b5563; /* საწყისი ტექსტის ფერი */
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  align-items: center;
+  gap: 10px;
+
+  /* 2. გრადიენტული ფონი: 
+     მარცხენა მხარე არის იისფერი გრადიენტი (ან ფერი), მარჯვენა მხარე კი - შენი საწყისი ნაცრისფერი ფონი (#edeef0). */
+  background: linear-gradient(to right, #6c5dd3 50%, #edeef0 50%);
+
+  /* 3. ვზრდით ფონს ორმაგად და ვწევთ მარჯვნივ, რომ თავიდან მხოლოდ ნაცრისფერი ჩანდეს */
+  background-size: 200% 100%;
+  background-position: 100% 0;
+
+  /* 4. რბილი გადასვლებისთვის (ტექსტის ფერი, ჩრდილი და ფონის მოძრაობა) */
+  transition:
+    background-position 0.4s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.loginButton:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loginButton:hover {
+  /* 1. ფონს გადმოვაჩოჩებთ მარცხნივ, რაც იისფერ ფერს შემოიყვანს მარცხნიდან მარჯვნივ */
+  background-position: 0 0;
+
+  /* 2. ტექსტს ვხდით თეთრს, რომ მუქ იისფერ ფონზე კარგად იკითხებოდეს */
+  color: #ffffff;
+
+  /* 3. ვამატებთ იისფერ ჩრდილს */
+  box-shadow: 0px 4px 20px -5px rgb(116, 92, 180);
+}
+
+/* თუ ღილაკის შიგნით SVG აიქონი გაქვს, ისიც გავათეთროთ ჰოვერზე */
+
+.loginButtonContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.languageContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.languageButton {
+  background-color: #edeef0;
+  color: #4b5563;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.languageButton:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+}
+
+.languageDropdownButton {
+  position: absolute;
+  top: 65px;
+  right: 0px;
+  background-color: #edeef0;
+  color: #4b5563;
+  border-radius: 50px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.languageDropdownButton:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+}
+
+.languageDropdownButton.languageDropdownButtonOpen {
+  display: flex;
+}
+
+/*___________________________________________________________________________________________________
+
+   Animation for dropdown
+_____________________________________________________________________________________________________
+ */
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
@@ -43,20 +278,297 @@
   }
 }
 
-/* დამატებითი ელემენტები */
-.logo {
-  font-weight: bold;
-  font-size: 1.25rem;
+/*___________________________________________________________________________________________________
+
+   Additional elements
+_____________________________________________________________________________________________________
+ */
+
+.logoButton {
+  font-weight: 500;
+  font-size: 1.75rem;
   color: #4f46e5;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: uppercase;
+  border: none;
+  will-change: transform, filter;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.navigation a {
-  margin-left: 1rem;
-  text-decoration: none;
+.logoButton:hover {
+  transform: scale(1.1) translateZ(0);
+  filter: brightness(1.1);
+}
+
+.menuIcon {
+  font-size: 1.2rem;
+}
+
+.categoriesContainer {
+  position: relative;
+}
+
+.categoriesButton {
+  background-color: #edeef0;
   color: #4b5563;
-  transition: color 0.2s;
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
-.navigation a:hover {
-  color: #4f46e5;
+.categoriesButton .categoriesButtonText {
+  display: inline-block;
+  transition: background-position 0.4s ease;
+
+  /* ორფეროვანი გრადიენტი: მარცხნივ იისფერი (#6c5dd3), მარჯვნივ ძველი ნაცრისფერი (#4b5563) */
+  background: linear-gradient(to right, #7f56d9 50%, #4b5563 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 2. ჰოვერის ეფექტები */
+.categoriesButton:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+}
+
+/* როცა ღილაკს მივუტანთ მაუსს, ტექსტი შეივსება მარცხნიდან მარჯვნივ */
+.categoriesButton:hover .categoriesButtonText {
+  background-position: 0 0;
+}
+
+/*__________________________________________________________________________________________________
+
+  Modal styles
+_____________________________________________________________________________________________________
+*/
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1003;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+  height: 100vh;
+}
+
+.modalContent {
+  background-color: #fff;
+  border-radius: 50px;
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  width: 80%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: row;
+  transform: translateX(-40%);
+  overflow: hidden;
+}
+
+.modalSearchInput {
+  font-weight: bold;
+  border-right: 1px solid #e0e0e0;
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 30px 0;
+}
+
+.modalSearchInputTitle {
+  font-size: 1rem;
+}
+
+.modalSearchInputCategory {
+  font-size: 0.8rem;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.modalSearchOutput {
+  width: 70%;
+  height: 100%;
+}
+
+.modalSearchOutputHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 40px;
+  padding: 20px 0px 30px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modalSearchOutputHeaderTitle {
+  font-size: 1rem;
+}
+
+.modalSearchOutputHeaderTitleClear {
+  display: block;
+}
+
+.modalSearchOutputHeaderClear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.modalSearchOutputResults {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/*----------------------------------------------------------------------------------------------
+Header for tablets
+------------------------------------------------------------------------------------------------
+*/
+
+.categoriesButtonTablet {
+  background-color: #edeef0;
+  color: #4b5563;
+  /* padding: 12px 28px; */
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
+  align-items: center;
+  gap: 10px;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+.categoriesButtonTablet:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+}
+
+.customHeaderTablet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1250px;
+  height: 60px;
+  background-color: #ffffff;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.headerContentTablet {
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerActionsTablet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchBarTablet {
+  background-color: #edeef0;
+  height: 40px;
+  width: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.searchBarTablet:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.searchInputTablet {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+}
+
+.languageButtonTablet {
+  /* padding: 10px 20px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.languageButtonTablet:hover {
+  box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
+  background-color: #fff;
 }

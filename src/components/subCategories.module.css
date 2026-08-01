@@ -1,0 +1,52 @@
+/* subCategories.module.css */
+
+.megaMenuContainer {
+  /* ეს დაყოფს შენს კონტეინერს 3 ვერტიკალურ სვეტად */
+  column-count: 3;
+  column-gap: 30px; /* სვეტებს შორის დაშორება */
+  width: 100%;
+  padding: 10px;
+
+}
+
+.megaMenuContainer:hover {
+  cursor: pointer;
+}
+
+.subCategoryBlock {
+  /* ეს უზრუნველყოფს, რომ ერთი ბლოკი შუაზე არ გაიხლიჩოს და მეორე სვეტში არ გადავიდეს */
+  break-inside: avoid;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.subCategoryTitle {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.subCategoryList {
+  list-style: none;
+  padding: 0;
+}
+
+.subCategoryItem {
+  font-size: 13px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.subCategoryItem:hover {
+  color: #7f56d9;
+  transform: scale(1.05);
+}
+
+.subCategoryLink {
+  text-decoration: none;
+  color: #333;
+}
+
+.subCategoryLink .subCategoryTitle:hover {
+  color: #7f56d9;
+}

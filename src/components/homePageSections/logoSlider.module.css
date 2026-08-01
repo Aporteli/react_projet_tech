@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=EB+Garamond:wght@400;500;600&display=swap");
+ 
+.brandsTitle {
+  font-family: "Inter", serif;
+} 
+
+.headerWrapper {
+  width: 100%;
+  font-family: "Cormorant Garamond", serif;
+}
+
+/* --- ქვედა სექცია (სლაიდერი) --- */
+
+.sliderWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 80px;
+  height: 100px;
+  /* width: 100%; */
+}
+
+.arraws_slider {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 5px;
+}
+
+.buttonsContainer {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  pointer-events: none;
+}
+
+.arrowBtn {
+  position: absolute;
+  border: 1px solid #7f56d9;
+  border-radius: 50%;
+  font-size: 14px;
+  width: 45px;
+  height: 45px;
+  background-color: #e3d7ff;
+  color: #6359d2;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  pointer-events: auto;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.3s ease;
+}
+
+.arrowBtn:hover {
+  transform: scale(1.3);
+}
+
+.arrowBtn.left {
+  transform: translate(0, -50%);
+  left: 0;
+}
+
+.arrowBtn.right {
+  transform: translate(0, -50%);
+  right: 0;
+}
+
+.arrowBtn.disabled {
+  display: none;
+}
+
+.sliderContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  cursor: grab;
+  align-items: center;
+  padding: 5px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sliderContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.sliderContainer:active {
+  cursor: grabbing;
+}
+
+.categoryItemInner {
+  flex: 0 0 100px;
+  height: 100%;
+  padding: 10px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  box-shadow: 0px 0.5px 1px 3px rgba(0, 0, 0, 0.052);
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.2);
+}
+
+.logoLink {
+  text-decoration: none;
+}

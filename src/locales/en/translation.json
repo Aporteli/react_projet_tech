@@ -1,0 +1,462 @@
+{
+  "header": {
+    "categories": "Categories",
+    "welcome": "Welcome to our electronics store!",
+    "searchPlaceholder": "Search tech...",
+    "cart": "Cart",
+    "signIn": "Sign in"
+  },
+  "tooltip": {
+    "cart": {
+      "title": "Your cart is empty",
+      "subtitle": "Add items in order to purchase them",
+      "button": "Open shopping"
+    },
+    "wishlist": {
+      "title": "Your wishlist is empty",
+      "subtitle": "Add items in order to purchase them",
+      "button": "Open wishlist"
+    },
+    "compare": {
+      "title": "Your compare list is empty",
+      "subtitle": "Add items in order to compare them",
+      "button": "Open compare"
+    },
+    "subcategories": {
+      "soon": "Will be available soon..."
+    }
+  },
+  "categories": {
+    "Mobile Phones & Accessories": {
+      "Mobile Phones": [],
+      "Smart Watches": [],
+      "Smart Watch Accessories": [],
+      "Mobile Phone Accessories": [
+        "Protective Case",
+        "Screen Protector",
+        "Smart Glasses",
+        "Adapter",
+        "Portable Speaker",
+        "Power Bank",
+        "Wireless Charger",
+        "Wall Adapter",
+        "USB Cable",
+        "Micro SD Card",
+        "Car Holder",
+        "Car Charger",
+        "Mobile Gaming Controller",
+        "Video Stabilizer/Gimbal",
+        "Selfie Stick"
+      ]
+    },
+    "Computers & Accessories": {
+      "Laptop": [],
+      "Laptop Accessories": [
+        "Laptop Bag",
+        "Laptop Charger",
+        "Laptop Cooler",
+        "Laptop Stand",
+        "Laptop Stylus"
+      ],
+      "Tablet Computer": [],
+      "Tab Accessories": [
+        "Tab Protective Case",
+        "Tab Screen Protector",
+        "Tab Sylus",
+        "Tab Keyboard"
+      ],
+      "All-in-One Computer": [],
+      "Desktop Computer": [],
+      "Monitor": [],
+      "Monitor Accessories": [],
+      "PC Components": [
+        "Motheboard",
+        "CPU",
+        "Video Card",
+        "RAM",
+        "PC Case",
+        "Power Supply",
+        "Cooler",
+        "Thermal Paste",
+        "Storage HDD/SSD"
+      ],
+      "Print & Copy": ["Printer", "Scanner", "Cartridges & Tonners"],
+      "Networking Products": ["Router", "Network Switch", "Network Cables"],
+      "Computer Accessories": [
+        "Mouse",
+        "Mousepad",
+        "Keyboard",
+        "PC Speaker",
+        "PC Webcam",
+        "PC Streaming Accessories",
+        "External HDD/SSD",
+        "USB Flash Drive",
+        "Cables & Adapters",
+        "USB Hubs",
+        "Batteries & Battery Chargers",
+        "Screen Cleaners"
+      ],
+      "UPS Systems": [
+        "Surge Protection & Adapter",
+        "UPS Systems",
+        "UPS Accessories",
+        "Portable Powerstation"
+      ]
+    },
+    "TV & Audio": {
+      "TV": [],
+      "TV Accessories": ["Wall Mount", "Smart TV Box", "TV Cables & Adapters"],
+
+      "Projector": [],
+      "Projector Accessories": [],
+      "Audio Systems": ["Party Speaker", "Turntable", "Soundbar"]
+    },
+    "Gaming": {
+      "Gaming Laptop": [],
+      "Gaming Consoles": [
+        "PlayStation",
+        "PlayStation Accessories",
+        "PlayStation Games",
+        "Xbox",
+        "Xbox Accessories",
+        "Xbox Games",
+        "Nintendo Switch",
+        "Handheld Gaming Consoles",
+        "Meta VR Headset"
+      ],
+
+      "PC Gaming": {
+        "Gaming Desktop PC": [],
+        "PC Gaming Component": []
+      },
+
+      "PC Gaming Accessories": [
+        "Gaming Chair",
+        "Gaming Desk",
+        "Gaming Wheel",
+        "Gaming Mouse",
+        "Gaiming Mouse Pad",
+        "Gaming Keyboard",
+        "Gaming Microphone",
+        "Gaming Controller",
+        "Gaming Backpack"
+      ],
+      "Gaming Monitor": []
+    },
+    "Photo & Video": {
+      "Digital Camera": [],
+      "Digital Camera Accessories": [
+        "Camera Lens",
+        "Camera Bag",
+        "Camera Memory Card",
+        "Camera Battery"
+      ],
+      "Video Camera": [],
+      "Action Camera": [],
+      "Drone": ["Drone Accessories"],
+      "Telescope": [],
+      "Binocular": [],
+      "Microscope": []
+    },
+    "Headphones": {
+      "Wireless Headphones": [],
+      "Kid Headphones": [],
+      "Computer Headset": [],
+      "Headphone accessories": [],
+      "Buds": [],
+      "Wired headphones": []
+    },
+    "Home Appliances": {
+      "Refrigerator": [],
+      "Washing Machine": [],
+      "Dryer Machine": [],
+      "Dishwasher": [],
+      "Gas Cooker": [],
+      "Hob": [],
+      "Built-in Appliances": [
+        "Built-in Electric Oven",
+        "Built-in Hob",
+        "Built-in Cooker Hood",
+        "Built-in Microwave",
+        "Built-in Coffee Machine"
+      ],
+      "Climate Control Appliances": [
+        "Air Conditioner",
+        "Gas Heater",
+        "Electric Heater",
+        "Air Purifier & Humidifier",
+        "Air Cooler",
+        "Portable Air Conditioning"
+      ],
+      "Water Dispenser": [],
+      "Air Dresser": [],
+      "Home Appliance Accessories": []
+    },
+    "Small Domestic Appliances": {
+      "Kitchen Appliances": [
+        "Microwave Oven",
+        "Air Fryer",
+        "Electric Oven",
+        "kitchen Machine",
+        "Blender & Chopper",
+        "Bread Maker",
+        "Mixer",
+        "Multi Cooker",
+        "Meat Grinder",
+        "Sandwich Maker",
+        "Waffle Maker",
+        "Slush Maker",
+        "Toaster",
+        "Pizza Maker",
+        "Grill",
+        "Juicer",
+        "Electric Kettle",
+        "Fruit Dehydrator",
+        "Ice Machine",
+        "Deep Fryer",
+        "Wine Bottle Opener",
+        "Kitchen Scale",
+        "Kitchen Appliance Accessories",
+        "Slicer"
+      ],
+      "Coffee Lovers": [
+        "Coffee Machine",
+        "Coffee Boiler",
+        "Coffee Grinder",
+        "Coffee Machine Accessories",
+        "Coffee",
+        "Milk Frother"
+      ]
+    },
+    "House and Garden": {
+      "Mop & Floor Cleaner": [],
+      "Vacuum Cleaner": [],
+      "Vacuum Cleaner Accessories": [],
+      "Robotic Vacuum Cleaner": [],
+      "High-Pressure Washer": [],
+      "Iron": ["Iron Accessories"],
+      "Steam Cleaner": [],
+      "Garden Inventory": [],
+      "Glass Cleaner": []
+    },
+    "Personal Care": {
+      "Hair Straightener": [],
+      "Hair Dryer": [],
+      "Hair Curling Iron": [],
+      "Epilator": [],
+      "Electric Toothbrushes & Oral Irrigator": [],
+      "Treadmill": [],
+      "Trimmer": [],
+      "Scale": [],
+      "Massager": [],
+      "Skin Care": [],
+      "Electric Shaver": ["Trimmer Head"]
+    },
+    "Smart Home": {
+      "Smart Home Accessories": [],
+      "Smart Lightning": [],
+      "Smart Sensors": [],
+      "Smart Plugs": [],
+      "Smart Locks": [],
+      "Smart Camera": [],
+      "Control / Smart Home": [],
+      "Pet Care": ["Pet Food Feeder", "Pet Water Dispenser"]
+    },
+    "Parent and Child": {
+      "Kid Tab": [],
+      "Kid Microphone": [],
+      "Kids Electric toothbrush": [],
+      "Radio Nanny": [],
+      "Kid Smart Watch": [],
+      "Nanny Camera": [],
+      "Breast Pump": [],
+      "Baby Scale": [],
+      "Baby Food Maker": []
+    },
+    "Electric Vechiles & Car Tools": {
+      "Car Battery Tools": [],
+      "Car Wheel Tools": [],
+      "Video Recorder": []
+    },
+    "Electric Tranport": {
+      "Electric Scooter": [],
+      "Electric Bike": []
+    },
+    "Outlet": {
+      "Refrigerator (Outlet)": [],
+      "Air Conditioner (Outlet)": [],
+      "TV (Outlet)": [],
+      "Induction / Built-in Stove (outlet)": [],
+      "Built-in Cooker Hood (Outlet)": [],
+      "Gas Cookers (Outlet)": [],
+      "Built-in Electric Oven (Outlet)": [],
+      "Dryer Machines (Outlet)": [],
+      "Dishwashers (Outlet)": [],
+      "Washing Machine (Outlet)": []
+    },
+    "Services": {
+      "Mobile Phone Services": [],
+      "Tab Services": [],
+      "Laptop Services": [],
+      "Air Conditioner Services": []
+    }
+  },
+  "listCategories": {
+    "mobilePhonesAndAccessories": "Mobile Phones & Accessories",
+    "computersAndAccessories": "Computers & Accessories",
+    "tvAndAudio": "TV & Audio",
+    "gaming": "Gaming",
+    "photoAndVideo": "Photo & Video",
+    "headphones": "Headphones",
+    "homeAppliances": "Home Appliances",
+    "smallDomesticAppliances": "Small Domestic Appliances",
+    "houseAndGarden": "House and Garden",
+    "personalCare": "Personal Care",
+    "smartHome": "Smart Home",
+    "parentAndChild": "Parent and Child",
+    "electricVehiclesAndCarTools": "Electric Vehicles & Car Tools",
+    "electricTransport": "Electric Transport",
+    "outlet": "Outlet",
+    "services": "Services"
+  },
+
+  "footer": {
+    "aboutUs": {
+      "title": "About Us",
+      "whoWeAre": "Who we are",
+      "termsAndConditions": "Terms & Conditions",
+      "howToBuyOnline": "How to Buy Online",
+      "onlinePaymentMethods": "Online Payment Methods",
+      "addressesOfServiceCenters": "Addresses Of Service Centers"
+    },
+    "termsAndConditions": {
+      "title": "Terms and Conditions",
+      "warrantyTerms": "Warranty Terms",
+      "deviceOperationAndSafetyGuidelines": "Device Operation & Safety Guidelines",
+      "deliveryTermsAndConditions": "Delivery Terms & Conditions",
+      "personalDataPolicy": "Personal Data Policy"
+    },
+    "rights": {
+      "title": "This is a demo/portfolio website. All brand logos and trademarks belong to their respective owners"
+    }
+  },
+  "categoriesONhomePage": {
+    "categories": {
+      "title": "Categories"
+    },
+    "categoriesONhome": {
+      "Mobile Phones": "Mobile Phones & Accessories",
+      "TV & Audio": "TV & Audio",
+      "Photo & Video": "Photo & Video",
+      "Computers & Laptops": "Computers & Laptops",
+      "Gaming": "Gaming",
+      "Home Appliances": "Home Appliances",
+      "House & Garden": "House & Garden",
+      "Oven & Kitchen": "Oven & Kitchen",
+      "Personal Care": "Personal Care",
+      "Smart Home": "Smart Home"
+    }
+  },
+  "brands": {
+    "title": "Brands"
+  },
+  "categoryPage": {
+    "title": "Categories"
+  },
+  "discountSlider": {
+    "title": "Discount",
+    "buyNow": "Buy Now",
+    "perMonthFrom": "Per Month From: {{price}}"
+  },
+  "giftSlider": {
+    "title": "Gift"
+  },
+  "smallDomesticAppliances": {
+    "title": "Small Domestic Appliances",
+    "data": [
+      {
+        "id": 1,
+        "key": "for_coffee_lovers",
+        "title": "For Coffee Lovers",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/House And Garden1.webp",
+        "link": "/categories/coffee-makers"
+      },
+      {
+        "id": 2,
+        "key": "blender_and_chopper",
+        "title": "Blender and Chopper",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/House And Garden2.webp",
+        "link": "/categories/blenders"
+      },
+      {
+        "id": 3,
+        "key": "juicer",
+        "title": "Juicer",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/House And Garden3.webp",
+        "link": "/categories/juicers"
+      },
+      {
+        "id": 4,
+        "key": "microwave",
+        "title": "Microwave",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/House And Garden4.webp",
+        "link": "/categories/microwaves"
+      },
+      {
+        "id": 5,
+        "key": "air_fryer",
+        "title": "Air Fryer",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/House And Garden5.webp",
+        "link": "/categories/air-fryers"
+      }
+    ]
+  },
+  "gamingCategory": {
+    "title": "Gaming",
+    "data": [
+      {
+        "id": 1,
+        "key": "gaming_console",
+        "title": "Gaming Console",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/Gaming1.webp",
+        "link": "/categories/gaming-consoles"
+      },
+      {
+        "id": 2,
+        "key": "gaming_laptop",
+        "title": "Gaming Laptop",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/Gaming2.webp",
+        "link": "/categories/gaming-laptops"
+      },
+      {
+        "id": 3,
+        "key": "gaming_monitor",
+        "title": "Gaming Monitor",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/Gaming3.webp",
+        "link": "/categories/gaming-monitors"
+      },
+      {
+        "id": 4,
+        "key": "gaming_accessories",
+        "title": "Gaming Accessories",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/Gaming4.webp",
+        "link": "/categories/gaming-accessories"
+      },
+      {
+        "id": 5,
+        "key": "gaming_chair",
+        "title": "Gaming Chair",
+        "image": "../../assets/pictures/homePagePhotos/mixPhotos/Gaming5.webp",
+        "link": "/categories/gaming-chairs"
+      }
+    ]
+  },
+  "sort": {
+    "title": "Sort",
+    "all": "all",
+    "priceDecrese": "Price: decreasing",
+    "priceIncrease": "Price: increasing",
+    "name": "Name: A-Z",
+    "nameReverse": "Name: Z-A"
+  }
+}

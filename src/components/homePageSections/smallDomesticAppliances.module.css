@@ -1,0 +1,93 @@
+.container {
+  border: 2px solid red;
+  max-width: 1230px;
+  margin: 70px auto 0;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.mainDiv {
+  border: 2px solid blue;
+  width: 100%;
+  display: grid;
+  /* 3 თანაბარი სვეტი */
+  grid-template-columns: repeat(3, 1fr);
+  /* 2 მწკრივი (Row) */
+  grid-template-rows: repeat(2, 1fr);
+  gap: 16px; /* დაშორება ბარათებს შორის */
+  aspect-ratio: 15 / 5;
+}
+
+.item:nth-child(1) {
+  /* გაიჭიმება 2-ვე მწკრივზე (Row Span) */
+  grid-row: span 2;
+}
+
+.item {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  filter: blur(0.3px);
+}
+/* 📱 ეკრანის სიგანე 768px-ზე ნაკლები როცა გახდება */
+@media (max-width: 768px) {
+  .mainDiv {
+    /* 3 სვეტის ნაცვლად გავახდენთ 2 სვეტს */
+    grid-template-columns: repeat(2, 1fr);
+    /* მწკრივების რაოდენობას ავტომატურს გავხდით */
+    grid-template-rows: auto;
+    /* aspect-ratio-ს გავზრდით, რომ სიმაღლეში ადგილი ეყოს */
+    aspect-ratio: unset;
+  }
+
+  .item:nth-child(1) {
+    /* ვერტიკალურად გაჭიმვის (span 2) ნაცვლად, 
+       ახლა ჰორიზონტალურად დაიკავებს 2-ვე სვეტს */
+    grid-row: span 1;
+    grid-column: span 2;
+  }
+
+  .item {
+    width: 100%;
+    aspect-ratio: 8 / 5;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  
+}
+
+@media (max-width: 576px) {
+  .mainDiv {
+    /* მხოლოდ 1 სვეტი */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    aspect-ratio: unset;
+  }
+
+  .item:nth-child(1) {
+    /* გავუუქმებთ გაჭიმვას */
+    grid-row: span 1;
+    grid-column: span 1;
+  }
+
+  .item {
+    aspect-ratio: 8 / 5;
+  }
+}

@@ -1,0 +1,54 @@
+.mainSection {
+  width: 100%;
+  max-width: 1250px;
+  height: auto;
+  margin: 0 auto;
+  padding-bottom: 120px;
+}
+
+.imagesContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  height: 150px;
+  margin-top: 20px;
+}
+
+.imageItem {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.5s ease;
+}
+
+.imageItem:hover {
+  transform: scale(1.05);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.bannerContainer {
+  margin-top: 80px;
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.bannerImage:hover {
+  transform: scale(1.05);
+}
+

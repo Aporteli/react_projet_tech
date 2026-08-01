@@ -1,0 +1,357 @@
+.mainDiv {
+  margin-top: 120px;
+  position: relative;
+  padding: 0 10px;
+}
+
+.title {
+  font-family: "Inter", serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.outerDiv {
+  width: 100%;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+  padding-top: 16px;
+  cursor: grab;
+}
+
+.outerDiv:active {
+  cursor: grabbing;
+}
+
+.sliderDiv {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  margin: 0;
+  will-change: transform; /* ოპტიმიზაცია სირბილისთვის */
+}
+
+.flexDiv {
+  /* border: 2px solid green; */
+  overflow: visible;
+  position: relative;
+  height: 100%;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.flexDiv:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cardImageContainer {
+  /* border: 2px solid blue; */
+  width: 100%;
+  height: auto; /* ფიქსირებული სიმაღლე სურათის კონტეინერისთვის */
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  position: relative;
+  flex: 0 0 200px;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  gap: 8px;
+  z-index: 3;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+.card:hover .flexDiv {
+  transform: scale(1.05);
+}
+
+.discountBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.cardContent {
+  /* border: 2px solid red; */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  border-radius: 0 0 16px 16px;
+  flex-grow: 1;
+}
+
+.productName {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Inter", serif;
+  color: #1a1a1a;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 44px; /* ფიქსირებული სიმაღლე ტექსტისთვის, რომ კარტები თანაბარი იყოს */
+}
+
+.priceSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.priceContainer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.currentPrice {
+  font-family: "Inter", serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.oldPrice {
+  font-family: "Inter", serif;
+  font-size: 14px;
+  color: #999;
+  position: relative;
+  display: inline-block;
+}
+
+.oldPrice::before {
+  content: "";
+  position: absolute;
+  left: -5%;
+  top: 50%;
+  width: 110%;
+  height: 1px;
+  background: red;
+  transform: rotate(15deg);
+  transform-origin: center;
+}
+
+.perMonthFrom {
+  font-size: 12px;
+  color: #666;
+  font-family: "Inter", serif;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.buyNowBtn {
+  flex: 1;
+  padding: 12px 16px;
+  background: linear-gradient(
+    135deg,
+    var(--color-purple-1),
+    var(--color-dark-purple-1)
+  );
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Inter", serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.buyNowBtn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-dark-purple-1),
+    var(--color-purple-1)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 89, 210, 0.3);
+}
+
+.addToCartBtn {
+  padding: 12px;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addToCartBtn:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.compareBtn {
+  height: 35px;
+  width: 35px;
+  background: var(--color-white);
+  color: #665;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compareBtn:hover {
+  border-color: var(--color-purple-1);
+  color: var(--color-purple-1);
+  transform: translateY(-2px);
+}
+
+.heartBtn {
+  height: 35px;
+  width: 35px;
+  background: var(--color-white);
+  color: #665;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.heartBtn:hover {
+  border-color: var(--color-purple-1);
+  color: var(--color-purple-1);
+  transform: translateY(-2px);
+}
+
+.Btn,
+.BtnStop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-purple-1);
+  color: var(--color-purple-1);
+  background: white;
+  padding: 0;
+  transition:
+    background 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.Btn {
+  background: linear-gradient(
+    135deg,
+    var(--color-purple-2),
+    var(--color-dark-purple-1)
+  );
+  color: white;
+  border: none;
+}
+
+.BtnStop {
+  background: #f5f5f5;
+  color: #ccc;
+  border-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.Btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-purple-1),
+    var(--color-purple-4)
+  );
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 15px rgba(99, 89, 210, 0.4);
+}
+
+.left {
+  left: 10px;
+}
+
+.right {
+  right: 10px;
+}
+
+@media (max-width: 768px) {
+  .outerDiv {
+    height: 450px;
+  }
+  .cardImageContainer {
+    height: 200px;
+  }
+  .left {
+    left: 0;
+  }
+  .right {
+    right: 0;
+  }
+  .Btn,
+  .BtnStop {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
