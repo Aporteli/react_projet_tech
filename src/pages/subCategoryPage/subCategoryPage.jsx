@@ -115,6 +115,8 @@ export default function SubCategoryPage() {
     }
   };
 
+  console.log(filteredProducts, "filteredProducts");
+
   // ავტომატური გაშვება, როდესაც activeFilters ან ენა შეიცვლება
   useEffect(() => {
     if (slug) {
@@ -185,7 +187,7 @@ export default function SubCategoryPage() {
     };
   }, [slug, i18n.language]);
 
-  console.log(subCategories, "subCategories")
+  console.log(subCategories, "subCategories");
 
   // Fetch screenAttributes data (ფილტრების ჩექბოქსები)
   useEffect(() => {
@@ -201,6 +203,8 @@ export default function SubCategoryPage() {
       ignore = true;
     };
   }, [slug, i18n.language]);
+
+  console.log(screenAttributes, "screenAttributes");
 
   // Click Outside logic
   useEffect(() => {
