@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import {
   fetchSubCategories,
   fetchSubCateogryScreenAttributes,
-  fetchCategoryBrands,
 } from "../../api/categoryService";
 import { useState, useEffect, useRef, useMemo } from "react";
 import PriceFilter from "../../components/priceFilter";
@@ -22,19 +21,106 @@ export default function SubCategoryPage() {
   const sortRef = useRef(null);
   const mobileSortRef = useRef(null);
   const mobileFilterRef = useRef(null);
+  const [sortDropdown, setSortDropdown] = useState(false); // Dropdown-ის გახსნა/დახურვისთვის
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [visibleCount, setVisibleCount] = useState(16);
   const [openDropDowns, setOpenDropDowns] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [screenAttributes, setScreenAttributes] = useState(null);
-  const [brands, setBrands] = useState([]);
   const [sortOptions, setSortOptions] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [priceRange, setPriceRange] = useState([0, 7169]);
+
+  // 1. ახალი სთეითი გაფილტრული პროდუქტებისთვის
+  const [filteredProducts, setFilteredProducts] = useState(null);
+
   const { t, i18n } = useTranslation();
-  const { slug } = useParams();
+  const { slug } = useParams(); // URL-ის კატეგორიის სლაგი (მაგ: mobile-phones)
   const ITEMS_PER_GROUP = 16;
+
+  // 2. სწორი activeFilters სთეითი slug-ის მიხედვით
+  const [activeFilters, setActiveFilters] = useState({
+    category: slug || "mobile-phones",
+    filters: {},
+  });
+
+  // 3. როცა slug იცვლება URL-ში, განვაახლოთ activeFilters
+  useEffect(() => {
+    setActiveFilters({
+      category: slug,
+      filters: {},
+    });
+    setFilteredProducts(null); // ძველი გაფილტრული პროდუქტების გასუფთავება
+  }, [slug]);
+
+  const handleFilterChange = (attrName, optionValue, isChecked) => {
+    setActiveFilters((prev) => {
+      const updatedFilters = { ...prev.filters };
+
+      if (!updatedFilters[attrName]) {
+        updatedFilters[attrName] = [];
+      }
+
+      if (isChecked) {
+        updatedFilters[attrName].push(optionValue);
+      } else {
+        updatedFilters[attrName] = updatedFilters[attrName].filter(
+          (val) => val !== optionValue,
+        );
+
+        if (updatedFilters[attrName].length === 0) {
+          delete updatedFilters[attrName];
+        }
+      }
+
+      return {
+        ...prev,
+        category: slug, // ყოველთვის მიმდინარე slug
+        filters: updatedFilters,
+      };
+    });
+  };
+
+  // 4. სწორი API მოთხოვნის ფუნქცია
+  const fetchFilteredProducts = async () => {
+    try {
+      const requestBody = {
+        ...activeFilters,
+        category: slug, // უზრუნველყოფს, რომ სწორი კატეგორია გაიგზავნოს
+        lang: i18n.language,
+      };
+
+      const response = await fetch(
+        "http://localhost:5001/api/products/filter",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("პროდუქტების წამოღება ვერ მოხერხდა");
+      }
+
+      const resultProducts = await response.json();
+      console.log("ბექიდან მოვიდა:", resultProducts);
+      // ✅ სწორი სთეითის განახლება!
+      setFilteredProducts(resultProducts);
+    } catch (error) {
+      console.error("შეცდომა ფილტრაციისას:", error);
+    }
+  };
+
+  // ავტომატური გაშვება, როდესაც activeFilters ან ენა შეიცვლება
+  useEffect(() => {
+    if (slug) {
+      fetchFilteredProducts();
+    }
+  }, [activeFilters, i18n.language]);
 
   const handleWindowResize = () => {
     setWindowWidth(window.innerWidth);
@@ -77,15 +163,14 @@ export default function SubCategoryPage() {
   const selectedOption =
     sortTypes.find((option) => option.id === sortType) || sortTypes[0];
 
-  // 1. slug-ის შეცვლისთანავე ძველი მონაცემების გასუფთავება
+  // slug-ის შეცვლისას ძველი მონაცემების გასუფთავება
   useEffect(() => {
     setSubCategories([]);
     setScreenAttributes(null);
-    setBrands([]);
     setOpenDropDowns([]);
   }, [slug]);
 
-  // 2. Fetch subcategories data
+  // Fetch subcategories data (საწყისი პროდუქტები)
   useEffect(() => {
     let ignore = false;
     if (slug) {
@@ -100,7 +185,9 @@ export default function SubCategoryPage() {
     };
   }, [slug, i18n.language]);
 
-  // 3. Fetch screenAttributes data
+  console.log(subCategories, "subCategories")
+
+  // Fetch screenAttributes data (ფილტრების ჩექბოქსები)
   useEffect(() => {
     let ignore = false;
     if (slug) {
@@ -115,24 +202,7 @@ export default function SubCategoryPage() {
     };
   }, [slug, i18n.language]);
 
-  console.log(screenAttributes, "screenAttributes");
-
-  // 4. Fetch brands data
-  useEffect(() => {
-    let ignore = false;
-    if (slug) {
-      fetchCategoryBrands(slug)
-        .then((data) => {
-          if (!ignore) setBrands(data);
-        })
-        .catch((err) => console.error(err));
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [slug]);
-
-  // Click Outside logic for sort dropdown and mobile filter
+  // Click Outside logic
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sortRef.current && !sortRef.current.contains(event.target)) {
@@ -171,46 +241,38 @@ export default function SubCategoryPage() {
     };
   }, [mobileFilterOpen]);
 
-  // 5. ბექენდის ახალი filters ობიექტის გადაყვანა მასივში
   const formattedFilters = useMemo(() => {
     if (!screenAttributes || !screenAttributes.filters) return [];
 
     return Object.entries(screenAttributes.filters).map(
       ([attrName, options]) => {
-        // თუ ბრენდის ატრიბუტია და ცალკე წამოღებული ბრენდები გაქვთ, გამოიყენოს ის
-        if (attrName.toLowerCase() === "brand" && brands && brands.length > 0) {
-          return {
-            attribute_name: attrName,
-            options: brands,
-          };
-        }
-
         return {
           attribute_name: attrName,
           options: options || [],
         };
       },
     );
-  }, [screenAttributes, brands]);
+  }, [screenAttributes]);
 
-  // დამხმარე ფუნქცია რეალური (აქტუალური) ფასის მოსაპოვებლად
   const getEffectivePrice = (product) => {
     const p = Number(product.price) || 0;
-    const dp = Number(product.discountPrice) || 0;
+    const dp = Number(product.discount_price || product.discountPrice) || 0;
     return dp > 0 && dp < p ? dp : p;
   };
 
-  // სორტირების ლოგიკა useMemo-ში
+  // 5. სორტირება და ფასის ფილტრაცია (იყენებს ბექენდიდან წამოღებულ filteredProducts-ს, თუ ის არსებობს)
   const sortedProducts = useMemo(() => {
-    if (!subCategories) return [];
+    // თუ ბექენდიდან უკვე მოვიდა გაფილტრული პროდუქტები, ვიყენებთ იმას, თუ არა - საწყის subCategories-ს
+    const targetProducts =
+      filteredProducts !== null ? filteredProducts : subCategories;
 
-    // ფასის ფილტრაცია
-    let filtered = [...subCategories].filter((product) => {
+    if (!targetProducts) return [];
+
+    let filtered = [...targetProducts].filter((product) => {
       const price = getEffectivePrice(product);
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
-    // სორტირება
     return filtered.sort((a, b) => {
       const priceA = getEffectivePrice(a);
       const priceB = getEffectivePrice(b);
@@ -222,19 +284,14 @@ export default function SubCategoryPage() {
         return priceB - priceA;
       }
       if (sortType === "nameAsc") {
-        return a.name.localeCompare(b.name);
+        return (a.name || "").localeCompare(b.name || "");
       }
       if (sortType === "nameDesc") {
-        return b.name.localeCompare(a.name);
+        return (b.name || "").localeCompare(a.name || "");
       }
       return 0;
     });
-  }, [subCategories, sortType, priceRange]);
-
-  const handleFilterChange = (attrName, value, isChecked) => {
-    // აქ დაწერთ ფილტრაციის ჩართვა/გამორთვის ლოგიკას
-    console.log(attrName, value, isChecked);
-  };
+  }, [filteredProducts, subCategories, sortType, priceRange]);
 
   const handleToggleMobileFilter = () => {
     setMobileFilterOpen(!mobileFilterOpen);
@@ -249,19 +306,24 @@ export default function SubCategoryPage() {
             <PriceFilter onPriceChange={handlePriceChange} />
           </div>
           <div className={styles.filterGridDropDown}>
-            {formattedFilters.map((attribute, index) => {
-              const isOpen = openDropDowns.includes(index);
-              return (
-                <FilterDropdown
-                  key={attribute.attribute_name || index}
-                  attribute={attribute}
-                  index={index}
-                  isOpen={isOpen}
-                  onToggle={toggleDropDown}
-                  onFilterChange={handleFilterChange}
-                />
-              );
-            })}
+            {screenAttributes?.filters &&
+              Object.entries(screenAttributes.filters).map(
+                ([attributeName, options], index) => {
+                  const isOpen = openDropDowns.includes(index);
+                  return (
+                    <FilterDropdown
+                      key={attributeName || index}
+                      attributeName={attributeName}
+                      options={options}
+                      activeFilters={activeFilters}
+                      index={index}
+                      isOpen={isOpen}
+                      onToggle={toggleDropDown}
+                      onFilterChange={handleFilterChange}
+                    />
+                  );
+                },
+              )}
           </div>
         </div>
 
@@ -292,7 +354,7 @@ export default function SubCategoryPage() {
 
         <div className={styles.productsGrid}>
           <Breadcrumb
-            parentCategory={subCategories[0]?.parentCategory}
+            parentCategor={subCategories[0]?.parentCategor}
             subCategory={subCategories[0]?.subCategory}
           />
           <div className={styles.subCategoryHeader}>
@@ -317,10 +379,14 @@ export default function SubCategoryPage() {
             <div className={styles.outerDiv}>
               <div className={styles.sliderDiv}>
                 {sortedProducts.slice(0, visibleCount).map((product, index) => (
-                  <ProductCard key={index} product={product} t={t} />
+                  <ProductCard
+                    key={product.id || index}
+                    product={product}
+                    t={t}
+                  />
                 ))}
               </div>
-              {/* 3. See More ღილაკი — გამოჩნდება მხოლოდ მაშინ, თუ კიდევ დარჩა დასამალი პროდუქტები */}
+
               {visibleCount < sortedProducts.length && (
                 <div className={styles.seeMoreContainer}>
                   <button className={styles.seeMoreBtn} onClick={handleSeeMore}>

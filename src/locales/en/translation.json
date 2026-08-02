@@ -469,5 +469,17 @@
     "blog": "Blog",
     "shops": "Shops",
     "allPromotions": "All Promotions"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty"
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "empty": "Your wishlist is empty"
+  },
+  "compare": {
+    "title": "Compare Products",
+    "empty": "No products to compare"
   }
 }

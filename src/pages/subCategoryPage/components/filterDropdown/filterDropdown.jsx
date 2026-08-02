@@ -3,24 +3,24 @@ import { IoIosArrowDown } from "react-icons/io";
 import styles from "./filterDropdown.module.css";
 
 export default function FilterDropdown({
-  attribute,
+  attributeName,
+  options,
   index,
   isOpen,
   onToggle,
   onFilterChange,
+  activeFilters,
 }) {
   return (
     <div
-      key={attribute.attribute_name || index}
+      key={index}
       className={`${styles.filterGridDropDownItem} ${
         styles[`filterGridDropDownItem${index}`]
       }`}
       onClick={() => onToggle(index)}
     >
       <div className={styles.filterGridDropDownItemContent}>
-        <p className={styles.filterGridDropDownItemName}>
-          {attribute.attribute_name}
-        </p>
+        <p className={styles.filterGridDropDownItemName}>{attributeName}</p>
         <IoIosArrowDown />
       </div>
 
@@ -37,29 +37,23 @@ export default function FilterDropdown({
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {attribute.options && attribute.options.length > 0 ? (
-          attribute.options.map((option, optIndex) => {
+        {options && options.length > 0 ? (
+          options.map((option, optIndex) => {
             const optValue =
-              typeof option === "object"
-                ? option.id || option.name
-                : option;
-            const optLabel =
-              typeof option === "object" ? option.name : option;
+              typeof option === "object" ? option.id || option.name : option;
+            const optLabel = typeof option === "object" ? option.name : option;
 
             return (
-              <label
-                key={optIndex}
-                className={styles.filterCheckboxItem}
-              >
+              <label key={optIndex} className={styles.filterCheckboxItem}>
                 <input
                   type="checkbox"
                   value={optValue}
                   onChange={(e) =>
-                    onFilterChange(
-                      attribute.attribute_name,
-                      optValue,
-                      e.target.checked,
-                    )
+                    onFilterChange(attributeName, optValue, e.target.checked)
+                  }
+                  checked={
+                    activeFilters.filters[attributeName]?.includes(optValue) ||
+                    false // ✅ დაემატა .filters
                   }
                 />
                 <span>{optLabel}</span>

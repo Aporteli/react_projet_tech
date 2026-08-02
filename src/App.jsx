@@ -6,6 +6,9 @@ import ScrollToTop from "./ScrollToTop";
 import CategoryPage from "./pages/categoryPage/categoryPage";
 import SubCategoryPage from "./pages/subCategoryPage/subCategoryPage";
 import AdminAddProduct from "./pages/AdminAddProduct";
+import Cart from "./pages/cart";
+import Wishlist from "./pages/wishlist";
+import Compare from "./pages/compare";
 function App() {
   return (
     <div>
@@ -18,6 +21,9 @@ function App() {
             <Route path="/category/:slug" element={<CategoryPage />} />
             <Route path="/s/:slug" element={<SubCategoryPage />} />
             <Route path="/admin/add-product" element={<AdminAddProduct />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/compare" element={<Compare />} />
             <Route
               path="*"
               element={

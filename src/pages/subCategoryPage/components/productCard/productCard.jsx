@@ -1,16 +1,23 @@
 import HeartIconLight from "../../../../icons/heartIconLight";
 import { ShoppingCart, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "../../../../context/CartContext";
 import styles from "./productCard.module.css";
 
 const BASE_URL = "http://localhost:5001";
 
 export default function ProductCard({ product, t }) {
+  const { addToCart } = useCart();
   const currentP =
     Number(product.discountPrice) &&
     Number(product.discountPrice) < Number(product.price)
       ? Number(product.discountPrice)
       : Number(product.price);
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    addToCart(product);
+  };
 
   return (
     <div className={styles.flexDiv}>
@@ -48,10 +55,7 @@ export default function ProductCard({ product, t }) {
             </div>
           </div>
           <div className={styles.actionButtons}>
-            <button
-              className={styles.addToCartBtn}
-              onClick={(e) => e.preventDefault()}
-            >
+            <button className={styles.addToCartBtn} onClick={handleAddToCart}>
               <ShoppingCart size={15} />
             </button>
             <button

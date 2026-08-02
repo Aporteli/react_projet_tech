@@ -1,12 +1,12 @@
 import { IoIosArrowForward } from "react-icons/io";
 import styles from "./breadcrumb.module.css";
 
-export default function Breadcrumb({ parentCategory, subCategory }) {
+export default function Breadcrumb({ parentCategor, subCategory }) {
   return (
     <p className={styles.breadcrumb}>
       Home Page
       <IoIosArrowForward />
-      {parentCategory}
+      {parentCategor}
       <IoIosArrowForward />
       {subCategory}
     </p>
