@@ -170,6 +170,7 @@ export default function SubCategoryPage() {
     setSubCategories([]);
     setScreenAttributes(null);
     setOpenDropDowns([]);
+    setVisibleCount(16);
   }, [slug]);
 
   // Fetch subcategories data (საწყისი პროდუქტები)

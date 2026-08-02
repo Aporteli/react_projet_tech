@@ -27,9 +27,9 @@ export const CartIconTooltip = () => {
             src={emptyCartImage}
             alt="Empty cart"
           />
-          <button className={styles.continueShoppingButton}>
+          <Link to="/cart" className={styles.continueShoppingButton}>
             {t("tooltip.cart.button")}
-          </button>
+          </Link>
         </div>
       </>
     );

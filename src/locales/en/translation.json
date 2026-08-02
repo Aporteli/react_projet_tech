@@ -15,7 +15,10 @@
     "cart": {
       "title": "Your cart is empty",
       "subtitle": "Add items in order to purchase them",
-      "button": "Open shopping"
+      "button": "Open shopping",
+      "moreItems": "more items",
+      "subtotal": "Subtotal",
+      "viewCart": "View Cart"
     },
     "wishlist": {
       "title": "Your wishlist is empty",
@@ -472,7 +475,10 @@
   },
   "cart": {
     "title": "Shopping Cart",
-    "empty": "Your cart is empty"
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "checkout": "Proceed to Checkout"
   },
   "wishlist": {
     "title": "Wishlist",

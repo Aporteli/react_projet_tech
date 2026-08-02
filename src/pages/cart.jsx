@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import { Trash2, Plus, Minus } from "lucide-react";
+import emptyCartImage from "../assets/pictures/cartToolTipPhoto.webp";
 
 const BASE_URL = "http://localhost:5001";
 
@@ -25,6 +26,11 @@ export default function Cart() {
             <p className={styles.emptyMessage}>
               {t("cart.empty") || "Your cart is empty"}
             </p>
+            <img
+              className={styles.emptyCartImage}
+              src={emptyCartImage}
+              alt="Empty cart"
+            />
             <Link to="/" className={styles.continueShopping}>
               {t("cart.continueShopping") || "Continue Shopping"}
             </Link>
