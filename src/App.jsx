@@ -9,6 +9,7 @@ import AdminAddProduct from "./pages/AdminAddProduct";
 import Cart from "./pages/cart";
 import Wishlist from "./pages/wishlist";
 import Compare from "./pages/compare";
+import SearchResults from "./pages/searchResults/searchResults";
 function App() {
   return (
     <div>
@@ -24,6 +25,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/compare" element={<Compare />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route
               path="*"
               element={

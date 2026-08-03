@@ -48,7 +48,7 @@ function CategoryPage() {
         return res.json();
       })
       .then((data) => {
-        setCategoryInfo(data); 
+        setCategoryInfo(data);
         setLoading(false);
         console.log("ბექენდიდან მოსული მონაცემები:", data);
       })
@@ -56,7 +56,7 @@ function CategoryPage() {
         setError(err.message);
         setLoading(false);
       });
-  }, [slug, i18n.language]); 
+  }, [slug, i18n.language]);
 
   console.log(categoryInfo, "categoryInfo");
 

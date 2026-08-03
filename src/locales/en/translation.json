@@ -487,5 +487,12 @@
   "compare": {
     "title": "Compare Products",
     "empty": "No products to compare"
+  },
+  "searchResults": {
+    "title": "Search Results",
+    "loading": "Loading...",
+    "resultsFound": "results found",
+    "noResults": "No results found for your search",
+    "backToHome": "Back to Home"
   }
 }

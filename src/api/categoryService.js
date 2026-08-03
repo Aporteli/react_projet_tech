@@ -34,7 +34,7 @@ export async function fetchsubCategorySlugs(slug) {
   }
 }
 // Used in subCategoryPage.jsx
-export async function fetchSubCategories(slug,lang) {
+export async function fetchSubCategories(slug, lang) {
   try {
     if (!slug) return [];
     const response = await fetch(
@@ -49,7 +49,7 @@ export async function fetchSubCategories(slug,lang) {
 }
 
 //Used in subCategoryPage.jsx
-export async function fetchSubCateogryScreenAttributes(slug,lang) {
+export async function fetchSubCateogryScreenAttributes(slug, lang) {
   try {
     if (!slug) return [];
     const response = await fetch(
@@ -62,4 +62,3 @@ export async function fetchSubCateogryScreenAttributes(slug,lang) {
     throw error;
   }
 }
-
