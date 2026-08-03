@@ -41,7 +41,7 @@ export const CartIconTooltip = () => {
       <div className={styles.tooltip}>
         <p className={styles.title}>{t("tooltip.cart.title")}</p>
         <div className={styles.cartItems}>
-          {cartItems.slice(0, 3).map((item) => {
+          {cartItems.map((item) => {
             const currentPrice =
               Number(item.discountPrice) &&
               Number(item.discountPrice) < Number(item.price)
@@ -86,12 +86,6 @@ export const CartIconTooltip = () => {
               </div>
             );
           })}
-          {cartItems.length > 3 && (
-            <p className={styles.moreItems}>
-              +{cartItems.length - 3}{" "}
-              {t("tooltip.cart.moreItems") || "more items"}
-            </p>
-          )}
         </div>
         <div className={styles.cartSummary}>
           <div className={styles.summaryRow}>

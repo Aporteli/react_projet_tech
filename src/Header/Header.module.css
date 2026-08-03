@@ -131,6 +131,61 @@
   transform: scale(1.1) translateY(-1px);
 }
 
+.cartJump {
+  animation: cartJump 0.5s ease-in-out;
+}
+
+@keyframes cartJump {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  30% {
+    transform: scale(1.2) translateY(-8px);
+  }
+  50% {
+    transform: scale(1.1) translateY(-4px);
+  }
+  70% {
+    transform: scale(1.15) translateY(-6px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.cartCount {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: rgb(115, 94, 168);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: badgePop 0.3s ease-out;
+}
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .headerActions {
   height: 100%;
   display: flex;
@@ -381,6 +436,7 @@ ________________________________________________________________________________
 }
 
 .modalContent {
+  /* border: 2px solid red; */
   background-color: #fff;
   border-radius: 50px;
   box-shadow: 0px 2px 20px -5px rgb(116, 92, 180);
@@ -389,6 +445,7 @@ ________________________________________________________________________________
   left: 50%;
   width: 80%;
   max-width: 800px;
+  padding: 0px 30px 0 0;
   display: flex;
   flex-direction: row;
   transform: translateX(-50%);
@@ -412,6 +469,16 @@ ________________________________________________________________________________
   padding: 5px;
 }
 
+.modalSearchInputField {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
 .modalSearchInputCategory {
   font-size: 0.8rem;
   max-width: 100%;
@@ -426,6 +493,7 @@ ________________________________________________________________________________
 }
 
 .modalSearchOutput {
+  /* border: 2px solid blue; */
   width: 70%;
   height: 100%;
 }
@@ -437,6 +505,7 @@ ________________________________________________________________________________
   margin-right: 40px;
   padding: 20px 0px 30px 20px;
   border-bottom: 1px solid #e0e0e0;
+  /* border: 2px solid green; */
 }
 
 .modalSearchOutputHeaderTitle {
@@ -457,14 +526,75 @@ ________________________________________________________________________________
 }
 
 .modalSearchOutputResults {
+  /* border: 2px solid red; */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 100%;
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 500px;
+  overflow-y: auto !important;
   padding: 10px;
+  scrollbar-width: thin !important;
+  scrollbar-color: #7f56d9 transparent !important;
+}
+
+.searchResultItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.searchResultItem:hover {
+  background-color: #f9fafb;
+}
+
+.searchResultItem:last-child {
+  border-bottom: none;
+}
+
+.searchResultImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.searchResultInfo {
+  flex: 1;
+}
+
+.searchResultName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.searchResultPrice {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgb(115, 94, 168);
+  margin: 0;
+}
+
+.searchLoading {
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.noResults {
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
 }
 
 /*----------------------------------------------------------------------------------------------
@@ -783,4 +913,158 @@ Tablet Category Slide-up Panel
 .tabletCategoryPanelClose:hover {
   background-color: #f3f4f6;
   color: #1f2937;
+}
+
+/*----------------------------------------------------------------------------------------------
+Mobile Responsive - Under 340px
+------------------------------------------------------------------------------------------------
+*/
+
+@media (max-width: 340px) {
+  .customHeader {
+    height: 60px;
+  }
+
+  .headerSpacer {
+    height: 60px;
+  }
+
+  .headerContent {
+    padding: 0 8px;
+  }
+
+  .logoButton {
+    font-size: 1.25rem;
+  }
+
+  .categoriesButton {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .categoriesButtonText {
+    display: none;
+  }
+
+  .searchBar {
+    min-width: 120px;
+    max-width: 120px;
+    margin-right: 10px;
+  }
+
+  .searchInput {
+    font-size: 0.85rem;
+    height: 30px;
+  }
+
+  .searchIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .headerCart {
+    width: auto;
+    height: auto;
+    gap: 0.5rem;
+  }
+
+  .iconLink {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cartCount {
+    top: -6px;
+    right: -6px;
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    padding: 0 4px;
+  }
+
+  .loginButton {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .loginButtonText {
+    display: none;
+  }
+
+  .languageButton {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .languageDropdownButton {
+    width: 32px;
+    height: 32px;
+    top: 55px;
+  }
+
+  .tabletHeader {
+    height: 50px;
+    padding: 0 8px;
+  }
+
+  .tabletHeaderSpacer {
+    height: 50px;
+  }
+
+  .tabletLogoButton {
+    font-size: 0.5rem;
+  }
+
+  .tabletCategoriesButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tabletSearchButton {
+    width: 32px;
+    height: 32px;
+    font-size: 1.25rem;
+  }
+
+  .tabletLanguageButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tabletLanguageDropdownButton {
+    width: 32px;
+    height: 32px;
+    top: 45px;
+  }
+
+  .bottomNav {
+    padding: 4px 0;
+  }
+
+  .bottomNavIcon {
+    font-size: 1.25rem;
+  }
+
+  .bottomNavText {
+    font-size: 0.65rem;
+  }
+
+  .bottomNavItem {
+    padding: 2px 8px;
+  }
+
+  .modalContent {
+    width: 95%;
+    top: 60px;
+    border-radius: 20px;
+  }
+
+  .modalSearchInputTitle {
+    font-size: 0.85rem;
+  }
+
+  .modalSearchOutputHeaderTitle {
+    font-size: 0.85rem;
+  }
 }

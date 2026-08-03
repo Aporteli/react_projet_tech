@@ -106,7 +106,7 @@ function CategoriesDropdown() {
       .then((data) => {
         setProducts(data);
         setLoading(false);
-        console.log(data);
+        console.log(data, "ჩამოსაშლელი კატეგორიები");
       })
       .catch((err) => {
         console.error("შეცდომა ბაზიდან წამოღებისას:", err);

@@ -8,7 +8,7 @@
   align-items: center;
   background-color: #fff;
   color: #000;
-  padding: 10px;
+  padding: 10px 10px 20px 10px;
   width: 300px;
   height: auto;
   border-radius: 20px;
@@ -165,18 +165,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #ff4444;
+  border: 1px solid #bfa6f6;
   background: #fff;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  color: #ff4444;
+  color: #7f56d9;
   transition: all 0.2s;
   padding: 0;
   flex-shrink: 0;
 }
 
 .removeButton:hover {
-  background-color: #ff4444;
+  background-color: #6941c6;
   color: #fff;
 }
 
@@ -192,6 +192,8 @@
   width: 100%;
   padding-top: 10px;
   border-top: 1px solid #e0e0e0;
+  text-align: center;
+  /* border: 2px solid red; */
 }
 
 .summaryRow {
@@ -214,6 +216,7 @@
 }
 
 .viewCartButton {
+  display: block;
   width: 100%;
   padding: 10px;
   background-color: rgb(115, 94, 168);

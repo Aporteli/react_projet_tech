@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./Header.module.css"; // შემოგვაქვს როგორც ობიექტი
 import CartIcon from "../icons/cartIcon.jsx";
+import { useCart } from "../context/CartContext";
 import HeartIcon from "../icons/heartIcon.jsx";
 import CompareIcon from "../icons/compareIcon.jsx";
 import { FaX } from "react-icons/fa6";
@@ -12,7 +13,7 @@ import {
   FiPercent,
   FiHeart,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SiteLogo from "../icons/siteLogo.jsx";
 import SearchIcon from "../icons/searchIcon.jsx";
 import { CartIconTooltip } from "../components/tooltips/cartIconTooltip.jsx";
@@ -25,8 +26,14 @@ import CategoriesDropdown from "../components/categoriesDropdown.jsx";
 
 function HeaderDesktop() {
   const { t, i18n } = useTranslation();
+  const { cartCount } = useCart();
+  const navigate = useNavigate();
+  const [cartAnimation, setCartAnimation] = useState(false);
 
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [lengDropdounOpen, setLengDropdounOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || "en");
   const [openModal, setOpenModal] = useState(false);
@@ -46,6 +53,16 @@ function HeaderDesktop() {
     i18n.changeLanguage(lng);
   };
 
+  // Trigger cart animation when cart count changes
+  useEffect(() => {
+    if (cartCount > 0) {
+      setCartAnimation(true);
+      setTimeout(() => {
+        setCartAnimation(false);
+      }, 500);
+    }
+  }, [cartCount]);
+
   console.log(currentLanguage);
 
   const openModalHandler = () => {
@@ -54,6 +71,31 @@ function HeaderDesktop() {
 
   const closeModalHandler = () => {
     setOpenModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+
+    if (query.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language}`,
+      );
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -117,24 +159,77 @@ function HeaderDesktop() {
                   }}
                 >
                   <div className={styles.modalSearchInput}>
-                    <div className={styles.modalSearchInputTitle}>
-                      {t("header.modal.searchByCategory")}
-                    </div>
-                    <div className={styles.modalSearchInputCategory}></div>
+                    <input
+                      className={styles.modalSearchInputField}
+                      type="text"
+                      placeholder={t("header.modal.searchByCategory")}
+                      value={searchQuery}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      autoFocus
+                    />
                   </div>
                   <div className={styles.modalSearchOutput}>
                     <div className={styles.modalSearchOutputHeader}>
                       <div className={styles.modalSearchOutputHeaderTitle}>
                         {t("header.modal.searched")}
                       </div>
-                      <div className={styles.modalSearchOutputHeaderClear}>
-                        <GrClearOption />
-                        <p className={styles.modalSearchOutputHeaderTitleClear}>
-                          {t("header.modal.clear")}
-                        </p>
-                      </div>
+                      {searchQuery && (
+                        <div
+                          className={styles.modalSearchOutputHeaderClear}
+                          onClick={() => {
+                            setSearchQuery("");
+                            setSearchResults([]);
+                          }}
+                        >
+                          <GrClearOption />
+                          <p
+                            className={styles.modalSearchOutputHeaderTitleClear}
+                          >
+                            {t("header.modal.clear")}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <div className={styles.modalSearchOutputResults}></div>
+                    <div className={styles.modalSearchOutputResults}>
+                      {searchLoading && (
+                        <div className={styles.searchLoading}>Loading...</div>
+                      )}
+                      {!searchLoading &&
+                        searchResults.length === 0 &&
+                        searchQuery.length >= 2 && (
+                          <div className={styles.noResults}>
+                            No results found
+                          </div>
+                        )}
+                      {!searchLoading &&
+                        searchResults.map((product) => (
+                          <div className={styles.searchResultItem}>
+                            <Link
+                              key={product.id}
+                              to={`/product/${product.slug}`}
+                              className={styles.searchResultItemLink}
+                              onClick={closeModalHandler}
+                            >
+                              <img
+                                src={`http://localhost:5001/uploads/${product.image}`}
+                                alt={product.name}
+                                className={styles.searchResultImage}
+                              />
+                              <div className={styles.searchResultInfo}>
+                                <h4 className={styles.searchResultName}>
+                                  {product.name}
+                                </h4>
+                                <p className={styles.searchResultPrice}>
+                                  {product.discount_price
+                                    ? product.discount_price
+                                    : product.price}{" "}
+                                  ₾
+                                </p>
+                              </div>
+                            </Link>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -169,6 +264,8 @@ function HeaderDesktop() {
                   className={styles.searchInput}
                   type="text"
                   placeholder={t("header.searchPlaceholder")}
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
                 <SearchIcon />
               </div>
@@ -178,8 +275,14 @@ function HeaderDesktop() {
                   onMouseEnter={() => setCartHover(true)}
                   onMouseLeave={() => setCartHover(false)}
                 >
-                  <Link to="/cart" className={styles.iconLink}>
+                  <Link
+                    to="/cart"
+                    className={`${styles.iconLink} ${cartAnimation ? styles.cartJump : ""}`}
+                  >
                     <CartIcon />
+                    {cartCount > 0 && (
+                      <span className={styles.cartCount}>{cartCount}</span>
+                    )}
                   </Link>
                   {cartHover && <CartIconTooltip />}
                 </div>
@@ -248,6 +351,9 @@ function HeaderTablet() {
   const [openModal, setOpenModal] = useState(false);
   const [lengDropdounOpen, setLengDropdounOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || "en");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const lastScrollY = useRef(0);
   const headerHeight = 80;
 
@@ -266,6 +372,31 @@ function HeaderTablet() {
 
   const closeModalHandler = () => {
     setOpenModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+
+    if (query.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    setSearchLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language}`,
+      );
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -358,24 +489,75 @@ function HeaderTablet() {
                   }}
                 >
                   <div className={styles.modalSearchInput}>
-                    <div className={styles.modalSearchInputTitle}>
-                      {t("header.modal.searchByCategory")}
-                    </div>
-                    <div className={styles.modalSearchInputCategory}></div>
+                    <input
+                      className={styles.modalSearchInputField}
+                      type="text"
+                      placeholder={t("header.modal.searchByCategory")}
+                      value={searchQuery}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      autoFocus
+                    />
                   </div>
                   <div className={styles.modalSearchOutput}>
                     <div className={styles.modalSearchOutputHeader}>
                       <div className={styles.modalSearchOutputHeaderTitle}>
                         {t("header.modal.searched")}
                       </div>
-                      <div className={styles.modalSearchOutputHeaderClear}>
-                        <GrClearOption />
-                        <p className={styles.modalSearchOutputHeaderTitleClear}>
-                          {t("header.modal.clear")}
-                        </p>
-                      </div>
+                      {searchQuery && (
+                        <div
+                          className={styles.modalSearchOutputHeaderClear}
+                          onClick={() => {
+                            setSearchQuery("");
+                            setSearchResults([]);
+                          }}
+                        >
+                          <GrClearOption />
+                          <p
+                            className={styles.modalSearchOutputHeaderTitleClear}
+                          >
+                            {t("header.modal.clear")}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <div className={styles.modalSearchOutputResults}></div>
+                    <div className={styles.modalSearchOutputResults}>
+                      {searchLoading && (
+                        <div className={styles.searchLoading}>Loading...</div>
+                      )}
+                      {!searchLoading &&
+                        searchResults.length === 0 &&
+                        searchQuery.length >= 2 && (
+                          <div className={styles.noResults}>
+                            No results found
+                          </div>
+                        )}
+                      {!searchLoading &&
+                        searchResults.map((product) => (
+                          <Link
+                            key={product.id}
+                            to={`/product/${product.slug}`}
+                            className={styles.searchResultItem}
+                            onClick={closeModalHandler}
+                          >
+                            <img
+                              src={`http://localhost:5001/uploads/${product.image}`}
+                              alt={product.name}
+                              className={styles.searchResultImage}
+                            />
+                            <div className={styles.searchResultInfo}>
+                              <h4 className={styles.searchResultName}>
+                                {product.name}
+                              </h4>
+                              <p className={styles.searchResultPrice}>
+                                {product.discount_price
+                                  ? product.discount_price
+                                  : product.price}{" "}
+                                ₾
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -389,7 +571,7 @@ function HeaderTablet() {
               <FiMenu className={styles.tabletMenuIcon} />
             </button>
             <button className={styles.tabletLogoButton}>
-              <SiteLogo />
+              <SiteLogo className={styles.tabletLogo} />
             </button>
 
             <div className={styles.tabletHeaderActions}>

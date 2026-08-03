@@ -11,10 +11,11 @@ function Layout() {
     <>
       <div className={styles.container}>
         <Header />
-        <div className={styles.movingDivider}></div>
+        
         <main className={styles.main}>
           <div className={styles.home}>
             <div className={styles.homeContent}>
+              <div className={styles.movingDivider}></div>
               <div className={styles.subheader}>
                 <p className={styles.subheaderNumber}>
                   <FaPhoneAlt /> *3838 / (032) 222-22-22

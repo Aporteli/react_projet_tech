@@ -27,6 +27,7 @@ export default function SubCategories({ activeCategory }) {
     }
   }, [mainSlugs, activeCategory]);
 
+  console.log(subSlugs, "სლაგები");
 
   const categories = t("categories", { returnObjects: true }) || {};
 
@@ -43,12 +44,13 @@ export default function SubCategories({ activeCategory }) {
   }
 
   const activeSubKeys = Object.keys(categories[activeKey]);
-
+  console.log(activeSubKeys, "activeSubKeys");
   return (
     <div className={styles.megaMenuContainer}>
       {activeSubKeys.map((subKey, index) => {
         const products = categories[activeKey][subKey];
         const subSlug = subSlugs[index];
+
         return (
           <div key={subKey} className={styles.subCategoryBlock}>
             <Link

@@ -55,22 +55,24 @@ export default function Cart() {
                 : Number(item.price);
             return (
               <div key={item.id} className={styles.cartItem}>
-                <img
-                  className={styles.itemImage}
-                  src={`${BASE_URL}/uploads/${item.image}`}
-                  alt={item.name}
-                />
-                <div className={styles.itemDetails}>
-                  <h3 className={styles.itemName}>{item.name}</h3>
-                  <p className={styles.itemPrice}>
-                    {currentPrice} ₾
-                    {item.discountPrice &&
-                      Number(item.discountPrice) < Number(item.price) && (
-                        <span className={styles.oldPrice}>
-                          {Number(item.price)} ₾
-                        </span>
-                      )}
-                  </p>
+                <div className={styles.cartItemWrapper}>
+                  <img
+                    className={styles.itemImage}
+                    src={`${BASE_URL}/uploads/${item.image}`}
+                    alt={item.name}
+                  />
+                  <div className={styles.itemDetails}>
+                    <h3 className={styles.itemName}>{item.name}</h3>
+                    <p className={styles.itemPrice}>
+                      {currentPrice} ₾
+                      {item.discountPrice &&
+                        Number(item.discountPrice) < Number(item.price) && (
+                          <span className={styles.oldPrice}>
+                            {Number(item.price)} ₾
+                          </span>
+                        )}
+                    </p>
+                  </div>
                 </div>
                 <div className={styles.itemActions}>
                   <div className={styles.quantityControl}>

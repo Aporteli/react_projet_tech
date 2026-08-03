@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styles from "./categoryPage.module.css";
 import { IoIosArrowUp } from "react-icons/io";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 function CategoryPage() {
   const { slug } = useParams(); // URL-იდან ვიღებთ სლაგს (მაგ: mobile-phones-and-accessories)
@@ -39,7 +40,6 @@ function CategoryPage() {
 
   useEffect(() => {
     setLoading(true);
-    // მივმართავთ ჩვენს ახალ დინამიუ რ როუტს
     fetch(
       `http://localhost:5001/api/categories/single/${slug}?lang=${i18n.language}`,
     )
@@ -48,7 +48,7 @@ function CategoryPage() {
         return res.json();
       })
       .then((data) => {
-        setCategoryInfo(data); // ვინახავთ მიღებულ ერთ კონკრეტულ ობიექტს
+        setCategoryInfo(data); 
         setLoading(false);
         console.log("ბექენდიდან მოსული მონაცემები:", data);
       })
@@ -56,7 +56,9 @@ function CategoryPage() {
         setError(err.message);
         setLoading(false);
       });
-  }, [slug, i18n.language]); // თუ იუზერი სხვა კატეგორიაზე გადავა, fetch თავიდან გაეშვება
+  }, [slug, i18n.language]); 
+
+  console.log(categoryInfo, "categoryInfo");
 
   if (loading) return <div>იტვირთება კატეგორიის მონაცემები...</div>;
   if (error) return <div>შეცდომა: {error}</div>;
@@ -126,19 +128,21 @@ function CategoryPage() {
         </div>
 
         <div className={styles.categoryImages}>
-          {subNames.map((subName, index) => (
+          {subcategories.map((subCat, index) => (
             <div key={index} className={styles.categoryImageContainer}>
               <div className={styles.categorySubcategoriesImagesTitle}>
-                <p className={styles.categoryImageTitle}>{subName}</p>
+                <p className={styles.categoryImageTitle}>{subCat.name}</p>
               </div>
               {categoryImageLinks[index] && (
-                <div className={styles.categoryImageWrapper}>
-                  <img
-                    className={styles.categoryImage}
-                    src={`http://localhost:5001/uploads/${categoryImageLinks[index]}`}
-                    alt={subName}
-                  />
-                </div>
+                <Link to={`/s/${subCat.slug}`}>
+                  <div className={styles.categoryImageWrapper}>
+                    <img
+                      className={styles.categoryImage}
+                      src={`http://localhost:5001/uploads/${categoryImageLinks[index]}`}
+                      alt={subCat.name}
+                    />
+                  </div>
+                </Link>
               )}
             </div>
           ))}
