@@ -9,19 +9,23 @@ import { useHeaderScroll } from "../../hooks/useHeaderScroll";
 import { useSearch } from "../../hooks/useSearch";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useModal } from "../../hooks/useModal";
+import { useAuth } from "../../context/AuthContext";
 import SearchModal from "./SearchModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import HeaderIcons from "./HeaderIcons";
 import SearchBar from "./SearchBar";
+import AuthModal from "./AuthModal";
 
 export default function HeaderDesktop() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const headerState = useHeaderScroll(80);
   const activeClass = styles[headerState];
+  const { isAuthenticated, user, logout } = useAuth();
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const {
     searchQuery,
@@ -102,12 +106,29 @@ export default function HeaderDesktop() {
                 t={t}
               />
               <HeaderIcons />
-              <button className={styles.loginButton}>
-                <div className={styles.loginButtonContent}>
-                  <FiUser size={22} />{" "}
-                  <p className={styles.loginButtonText}>{t("header.signIn")}</p>
-                </div>
-              </button>
+              {isAuthenticated ? (
+                <button
+                  className={styles.loginButton}
+                  onClick={() => navigate("/user")}
+                >
+                  <div className={styles.loginButtonContent}>
+                    <FiUser size={22} />{" "}
+                    <p className={styles.loginButtonText}>User</p>
+                  </div>
+                </button>
+              ) : (
+                <button
+                  className={styles.loginButton}
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
+                  <div className={styles.loginButtonContent}>
+                    <FiUser size={22} />{" "}
+                    <p className={styles.loginButtonText}>
+                      {t("header.signIn")}
+                    </p>
+                  </div>
+                </button>
+              )}
               <LanguageSwitcher
                 currentLanguage={currentLanguage}
                 lengDropdownOpen={lengDropdownOpen}
@@ -119,6 +140,10 @@ export default function HeaderDesktop() {
           </div>
         </header>
       </div>
+      <AuthModal
+        openModal={isAuthModalOpen}
+        closeModal={() => setIsAuthModalOpen(false)}
+      />
     </>
   );
 }

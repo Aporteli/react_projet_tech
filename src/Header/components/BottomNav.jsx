@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import styles from "../Header.module.css";
 
-export default function BottomNav() {
+export default function BottomNav({ onSignInClick, isAuthenticated }) {
   return (
     <div className={styles.bottomNav}>
       <Link to="/" className={styles.bottomNavItem}>
@@ -27,10 +27,17 @@ export default function BottomNav() {
         <FiHeart className={styles.bottomNavIcon} />
         <span className={styles.bottomNavText}>Saved</span>
       </Link>
-      <Link to="/signin" className={styles.bottomNavItem}>
-        <FiUser className={styles.bottomNavIcon} />
-        <span className={styles.bottomNavText}>Sign In</span>
-      </Link>
+      {isAuthenticated ? (
+        <Link to="/user" className={styles.bottomNavItem}>
+          <FiUser className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>User</span>
+        </Link>
+      ) : (
+        <button className={styles.bottomNavItem} onClick={onSignInClick}>
+          <FiUser className={styles.bottomNavIcon} />
+          <span className={styles.bottomNavText}>Sign In</span>
+        </button>
+      )}
     </div>
   );
 }

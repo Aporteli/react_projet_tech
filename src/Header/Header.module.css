@@ -817,6 +817,10 @@ Bottom Navigation Bar
   transition: all 0.3s ease;
   padding: 4px 12px;
   border-radius: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .bottomNavItem:hover {
@@ -1067,4 +1071,290 @@ Mobile Responsive - Under 340px
   .modalSearchOutputHeaderTitle {
     font-size: 0.85rem;
   }
+}
+
+/*----------------------------------------------------------------------------------------------
+Auth Modal Styles
+------------------------------------------------------------------------------------------------
+*/
+
+.authModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.authModalContent {
+  background-color: #fff;
+  border-radius: 24px;
+  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: slideUpModal 0.3s ease-out forwards;
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.authModalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  color: #6b7280;
+  font-size: 1.25rem;
+}
+
+.authModalClose:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.authModalLogo {
+  margin-bottom: 20px;
+}
+
+.authModalLogoIcon {
+  font-size: 3rem;
+}
+
+.authModalTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.authModalSubtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.authToggle {
+  display: flex;
+  background-color: #f3f4f6;
+  border-radius: 12px;
+  padding: 4px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.authToggleButton {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.authToggleActive {
+  background-color: #fff;
+  color: #4f46e5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.authForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.phoneInputContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.countryCodeSelect {
+  padding: 12px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: 0.875rem;
+  color: #374151;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  min-width: 70px;
+}
+
+.countryCodeSelect:focus {
+  border-color: #4f46e5;
+}
+
+.authInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.authInput:focus {
+  border-color: #4f46e5;
+}
+
+.authPrimaryButton {
+  width: 100%;
+  padding: 17px 24px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  margin-bottom: 12px;
+}
+
+.authPrimaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+
+.authPrimaryButton:active {
+  transform: translateY(0);
+}
+
+.authGoogleButton {
+  width: 100%;
+  padding: 14px 24px;
+  background-color: #fff;
+  color: #374151;
+  border: 0.5px solid #e5e7eb;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.authGoogleButton:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.authGoogleIcon {
+  font-size: 1.25rem;
+}
+
+.authSecondaryButton {
+  width: 100%;
+  padding: 14px 24px;
+  background-color: transparent;
+  color: #4f46e5;
+  border: 0.5px solid #afabf8;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.authSecondaryButton:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.authCheckboxes {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  margin-top: 12px;
+}
+
+.authCheckboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.authCheckbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #4f46e5;
+}
+
+.authCheckboxText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.authErrorMessage {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+}
+
+.authSuccessMessage {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #16a34a;
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+}
+
+.authModalLogoIcon {
+  /* border:2px solid red; */
+  width: 50px;
+  height: 50px;
 }

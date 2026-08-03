@@ -9,19 +9,23 @@ import { useHeaderScroll } from "../../hooks/useHeaderScroll";
 import { useSearch } from "../../hooks/useSearch";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useModal } from "../../hooks/useModal";
+import { useAuth } from "../../context/AuthContext";
 import SearchModal from "./SearchModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import BottomNav from "./BottomNav";
 import TabletCategoryPanel from "./TabletCategoryPanel";
+import AuthModal from "./AuthModal";
 
 export default function HeaderTablet() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const headerState = useHeaderScroll(80);
   const activeClass = styles[headerState];
+  const { isAuthenticated } = useAuth();
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const {
     searchQuery,
@@ -102,10 +106,17 @@ export default function HeaderTablet() {
           </div>
         </header>
       </div>
-      <BottomNav />
+      <BottomNav
+        onSignInClick={() => setIsAuthModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+      />
       <TabletCategoryPanel
         categoryOpen={categoryOpen}
         setCategoryOpen={setCategoryOpen}
+      />
+      <AuthModal
+        openModal={isAuthModalOpen}
+        closeModal={() => setIsAuthModalOpen(false)}
       />
     </>
   );
