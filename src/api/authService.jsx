@@ -69,3 +69,47 @@ export const handleGoogleAuth = async (googleAccessToken) => {
     return { success: false, error: "Google ავტორიზაციის შეცდომა" };
   }
 };
+
+export async function sendEmailVerificationCode(email) {
+  try {
+    const response = await fetch(`${BASE_URL}/verification/email-verification`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "დაფიქსირდა შეცდომა");
+    }
+
+    return { success: true, message: data.message };
+  } catch (err) {
+    return { success: false, error: err.message || "დაფიქსირდა შეცდომა" };
+  }
+}
+
+export async function verifyEmailCode(email, code) {
+  try {
+    const response = await fetch(`${BASE_URL}/verification/code-verification`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, code }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "დაფიქსირდა შეცდომა");
+    }
+
+    return { success: true, message: data.message, data };
+  } catch (err) {
+    return { success: false, error: err.message || "დაფიქსირდა შეცდომა" };
+  }
+}

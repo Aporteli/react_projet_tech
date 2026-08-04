@@ -14,6 +14,8 @@ import {
   handleRegister as registerApi,
   handleSignIn as signInApi,
   handleGoogleAuth as googleAuthApi,
+  sendEmailVerificationCode,
+  verifyEmailCode,
 } from "../../api/authService";
 
 export default function AuthModal({ openModal, closeModal }) {
@@ -34,6 +36,9 @@ export default function AuthModal({ openModal, closeModal }) {
   const [otpStep, setOtpStep] = useState("enter-phone");
   const [otpCode, setOtpCode] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const [emailVerificationStep, setEmailVerificationStep] =
+    useState("enter-email");
+  const [emailVerificationCode, setEmailVerificationCode] = useState("");
 
   useEffect(() => {
     if (openModal && !window.recaptchaVerifier) {
@@ -47,6 +52,8 @@ export default function AuthModal({ openModal, closeModal }) {
 
   const handleClose = () => {
     setOtpStep("enter-phone");
+    setEmail("");
+    setPassword("");
     setOtpCode("");
     setError("");
     setMessage("");
@@ -55,6 +62,8 @@ export default function AuthModal({ openModal, closeModal }) {
     setLoading(false);
     setConfirmationResult(null);
     setOtpCode?.("");
+    setEmailVerificationStep("enter-email");
+    setEmailVerificationCode("");
     if (window.recaptchaVerifier) {
       try {
         window.recaptchaVerifier.clear();
@@ -206,6 +215,81 @@ export default function AuthModal({ openModal, closeModal }) {
     setLoading(false);
   };
 
+  const validateEmail = (emailStr) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(emailStr);
+  };
+
+  // 📧 Send email verification code
+  const handleSendEmailVerification = async () => {
+    if (!validateEmail(email)) {
+      setError(t("auth.errors.enterEmail"));
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await sendEmailVerificationCode(email);
+      if (result.success) {
+        setEmailVerificationStep("enter-code");
+        setMessage("Verification code sent to your email!");
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError("Failed to send verification code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 📧 Verify email code
+  const handleVerifyEmailCode = async () => {
+    if (!emailVerificationCode) {
+      setError("Please enter verification code");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const result = await verifyEmailCode(email, emailVerificationCode);
+      if (result.success) {
+        // After verification, proceed with registration
+        const registerResult = await registerApi({
+          method: "email",
+          email,
+          password,
+          agreeTerms,
+          agreeMarketing,
+          verified: true,
+        });
+
+        if (registerResult.success) {
+          localStorage.setItem("token", registerResult.data.token);
+          if (registerResult.user) {
+            localStorage.setItem("user", JSON.stringify(registerResult.user));
+          }
+          login(registerResult.user);
+          setMessage("Registration successful!");
+          setTimeout(() => handleClose(), 1000);
+        } else {
+          setError(registerResult.error);
+        }
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError("Verification failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -216,7 +300,16 @@ export default function AuthModal({ openModal, closeModal }) {
           handleVerifyOtp();
         }
       } else {
-        handleEmailAuth();
+        if (authMode === "signup" && emailVerificationStep === "enter-code") {
+          handleVerifyEmailCode();
+        } else if (
+          authMode === "signup" &&
+          emailVerificationStep === "enter-email"
+        ) {
+          handleSendEmailVerification();
+        } else {
+          handleEmailAuth();
+        }
       }
     }
   };
@@ -330,79 +423,160 @@ export default function AuthModal({ openModal, closeModal }) {
         ) : (
           /* ✉️ 2. EMAIL AUTH (Sign In / Sign Up) */
           <div className={styles.authForm}>
-            <input
-              type="email"
-              className={styles.authInput}
-              placeholder={t("auth.emailAddress")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <input
-              type="password"
-              className={styles.authInput}
-              placeholder={t("auth.password")}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+            {authMode === "signup" &&
+            emailVerificationStep === "enter-email" ? (
+              <>
+                <input
+                  type="email"
+                  className={styles.authInput}
+                  placeholder={t("auth.emailAddress")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <input
+                  type="password"
+                  className={styles.authInput}
+                  placeholder={t("auth.password")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
 
-            {authMode === "signup" && (
-              <div className={styles.authCheckboxes}>
-                <label className={styles.authCheckboxLabel}>
-                  <input
-                    type="checkbox"
-                    className={styles.authCheckbox}
-                    checked={agreeTerms}
-                    onChange={(e) => setAgreeTerms(e.target.checked)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <span className={styles.authCheckboxText}>
-                    {t("auth.agreeTerms")}
-                  </span>
-                </label>
-                <label className={styles.authCheckboxLabel}>
-                  <input
-                    type="checkbox"
-                    className={styles.authCheckbox}
-                    checked={agreeMarketing}
-                    onChange={(e) => setAgreeMarketing(e.target.checked)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <span className={styles.authCheckboxText}>
-                    {t("auth.agreeMarketing")}
-                  </span>
-                </label>
-              </div>
+                <div className={styles.authCheckboxes}>
+                  <label className={styles.authCheckboxLabel}>
+                    <input
+                      type="checkbox"
+                      className={styles.authCheckbox}
+                      checked={agreeTerms}
+                      onChange={(e) => setAgreeTerms(e.target.checked)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <span className={styles.authCheckboxText}>
+                      {t("auth.agreeTerms")}
+                    </span>
+                  </label>
+                  <label className={styles.authCheckboxLabel}>
+                    <input
+                      type="checkbox"
+                      className={styles.authCheckbox}
+                      checked={agreeMarketing}
+                      onChange={(e) => setAgreeMarketing(e.target.checked)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <span className={styles.authCheckboxText}>
+                      {t("auth.agreeMarketing")}
+                    </span>
+                  </label>
+                </div>
+
+                {error && (
+                  <div className={styles.authErrorMessage}>{error}</div>
+                )}
+                {message && (
+                  <div className={styles.authSuccessMessage}>{message}</div>
+                )}
+
+                <button
+                  className={styles.authPrimaryButton}
+                  onClick={handleSendEmailVerification}
+                  disabled={loading}
+                >
+                  {loading ? t("auth.signingIn") : "Send Verification Code"}
+                </button>
+              </>
+            ) : authMode === "signup" &&
+              emailVerificationStep === "enter-code" ? (
+              <>
+                <input
+                  type="text"
+                  className={styles.authInput}
+                  placeholder="Enter verification code"
+                  value={emailVerificationCode}
+                  onChange={(e) => setEmailVerificationCode(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+
+                {error && (
+                  <div className={styles.authErrorMessage}>{error}</div>
+                )}
+                {message && (
+                  <div className={styles.authSuccessMessage}>{message}</div>
+                )}
+
+                <button
+                  className={styles.authPrimaryButton}
+                  onClick={handleVerifyEmailCode}
+                  disabled={loading}
+                >
+                  {loading ? t("auth.signingIn") : "Verify Code"}
+                </button>
+
+                <button
+                  className={styles.authSecondaryButton}
+                  onClick={() => {
+                    setEmailVerificationStep("enter-email");
+                    setEmailVerificationCode("");
+                  }}
+                >
+                  Back
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  className={styles.authInput}
+                  placeholder={t("auth.emailAddress")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <input
+                  type="password"
+                  className={styles.authInput}
+                  placeholder={t("auth.password")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+
+                {error && (
+                  <div className={styles.authErrorMessage}>{error}</div>
+                )}
+                {message && (
+                  <div className={styles.authSuccessMessage}>{message}</div>
+                )}
+
+                <button
+                  className={styles.authPrimaryButton}
+                  onClick={handleEmailAuth}
+                  disabled={loading}
+                >
+                  {loading
+                    ? t("auth.signingIn")
+                    : authMode === "signin"
+                      ? t("auth.signInButton")
+                      : t("auth.signUpButton")}
+                </button>
+
+                <button
+                  className={styles.authSecondaryButton}
+                  onClick={() => {
+                    setAuthMode(authMode === "signin" ? "signup" : "signin");
+                    setEmail("");
+                    setPassword("");
+                    setError("");
+                    setEmailVerificationStep("enter-email");
+                    setEmailVerificationCode("");
+                  }}
+                >
+                  {authMode === "signin"
+                    ? t("auth.signUpButton")
+                    : t("auth.signInButton")}
+                </button>
+              </>
             )}
-
-            {error && <div className={styles.authErrorMessage}>{error}</div>}
-            {message && (
-              <div className={styles.authSuccessMessage}>{message}</div>
-            )}
-
-            <button
-              className={styles.authPrimaryButton}
-              onClick={handleEmailAuth}
-              disabled={loading}
-            >
-              {loading
-                ? t("auth.signingIn")
-                : authMode === "signin"
-                  ? t("auth.signInButton")
-                  : t("auth.signUpButton")}
-            </button>
-
-            <button
-              className={styles.authSecondaryButton}
-              onClick={() =>
-                setAuthMode(authMode === "signin" ? "signup" : "signin")
-              }
-            >
-              {authMode === "signin"
-                ? t("auth.signUpButton")
-                : t("auth.signInButton")}
-            </button>
           </div>
         )}
 
