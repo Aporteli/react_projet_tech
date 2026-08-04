@@ -6,9 +6,12 @@ import {
   FiHeart,
   FiUser,
 } from "react-icons/fi";
+import { useAuth } from "../../context/AuthContext";
 import styles from "../Header.module.css";
 
 export default function BottomNav({ onSignInClick, isAuthenticated }) {
+  const { user } = useAuth();
+
   return (
     <div className={styles.bottomNav}>
       <Link to="/" className={styles.bottomNavItem}>
@@ -29,8 +32,12 @@ export default function BottomNav({ onSignInClick, isAuthenticated }) {
       </Link>
       {isAuthenticated ? (
         <Link to="/user" className={styles.bottomNavItem}>
-          <FiUser className={styles.bottomNavIcon} />
-          <span className={styles.bottomNavText}>User</span>
+          <div className={styles.bottomNavUserAvatar}>
+            <FiUser className={styles.bottomNavIcon} />
+          </div>
+          <span className={styles.bottomNavText}>
+            {user?.email ? user.email.split("@")[0] : "User"}
+          </span>
         </Link>
       ) : (
         <button className={styles.bottomNavItem} onClick={onSignInClick}>

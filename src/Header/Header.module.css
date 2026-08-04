@@ -209,16 +209,9 @@ ________________________________________________________________________________
   font-size: 1rem;
   align-items: center;
   gap: 10px;
-
-  /* 2. გრადიენტული ფონი: 
-     მარცხენა მხარე არის იისფერი გრადიენტი (ან ფერი), მარჯვენა მხარე კი - შენი საწყისი ნაცრისფერი ფონი (#edeef0). */
   background: linear-gradient(to right, #6c5dd3 50%, #edeef0 50%);
-
-  /* 3. ვზრდით ფონს ორმაგად და ვწევთ მარჯვნივ, რომ თავიდან მხოლოდ ნაცრისფერი ჩანდეს */
   background-size: 200% 100%;
   background-position: 100% 0;
-
-  /* 4. რბილი გადასვლებისთვის (ტექსტის ფერი, ჩრდილი და ფონის მოძრაობა) */
   transition:
     background-position 0.4s ease,
     color 0.3s ease,
@@ -238,22 +231,67 @@ ________________________________________________________________________________
 }
 
 .loginButton:hover {
-  /* 1. ფონს გადმოვაჩოჩებთ მარცხნივ, რაც იისფერ ფერს შემოიყვანს მარცხნიდან მარჯვნივ */
   background-position: 0 0;
-
-  /* 2. ტექსტს ვხდით თეთრს, რომ მუქ იისფერ ფონზე კარგად იკითხებოდეს */
   color: #ffffff;
-
-  /* 3. ვამატებთ იისფერ ჩრდილს */
   box-shadow: 0px 4px 20px -5px rgb(116, 92, 180);
 }
+.loginButtonAuth {
+  color: #4b5563; /* საწყისი ტექსტის ფერი */
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.3s ease;
+}
 
-/* თუ ღილაკის შიგნით SVG აიქონი გაქვს, ისიც გავათეთროთ ჰოვერზე */
+.loginButtonAuth:hover {
+  transform: translateY(-4px);
+}
 
 .loginButtonContent {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.loginButtonContentAuth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgb(115, 94, 168);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.userName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.userEmail {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
 }
 
 .languageContainer {
@@ -836,6 +874,18 @@ Bottom Navigation Bar
 .bottomNavText {
   font-size: 0.75rem;
   font-weight: 500;
+}
+
+.bottomNavUserAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 2px;
 }
 
 /*----------------------------------------------------------------------------------------------

@@ -494,5 +494,39 @@
     "resultsFound": "results found",
     "noResults": "No results found for your search",
     "backToHome": "Back to Home"
+  },
+  "user": {
+    "title": "User Profile",
+    "welcome": "Welcome!",
+    "email": "Email",
+    "phone": "Phone",
+    "userId": "User ID",
+    "logout": "Logout",
+    "notLoggedIn": "You are not logged in"
+  },
+  "auth": {
+    "title": "Profile",
+    "signInTitle": "Authorize In The System",
+    "signUpTitle": "Create Account",
+    "byPhone": "By Phone",
+    "byEmail": "By Email",
+    "mobileNumber": "Mobile number",
+    "emailAddress": "Email address",
+    "password": "Password",
+    "signingIn": "Signing In...",
+    "getCode": "Get Code",
+    "signInButton": "Sign In",
+    "signInWithGoogle": "Sign in with Google",
+    "signUpButton": "Sign Up",
+    "signingUp": "Signing Up...",
+    "mobileNumberSignup": "Mobile Number",
+    "emailAddressSignup": "Email Address",
+    "agreeTerms": "By Clicking On Sign Up Button I Agree To Terms And Conditions",
+    "agreeMarketing": "I Agree To Receive Information/Marketing Messages",
+    "errors": {
+      "enterMobileNumber": "Please enter your mobile number",
+      "enterEmailAndPassword": "Please enter your email and password",
+      "agreeTerms": "Please agree to the terms and conditions"
+    }
   }
 }

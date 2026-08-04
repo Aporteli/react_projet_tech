@@ -49,3 +49,23 @@ export async function handleSignIn(formData) {
     return { success: false, error: err.message || "დაფიქსირდა შეცდომა" };
   }
 }
+
+export const handleGoogleAuth = async (googleAccessToken) => {
+  try {
+    const response = await fetch(`${BASE_URL}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ googleToken: googleAccessToken }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return { success: true, data: { token: data.token }, user: data.user };
+    } else {
+      return { success: false, error: data.message };
+    }
+  } catch (err) {
+    return { success: false, error: "Google ავტორიზაციის შეცდომა" };
+  }
+};

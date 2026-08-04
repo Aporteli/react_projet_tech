@@ -1,17 +1,24 @@
 import { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
+import { useTranslation } from "react-i18next";
 import styles from "../Header.module.css";
 import SiteLogo from "../../icons/siteLogoOnSignIn";
 import { useModal } from "../../hooks/useModal";
 import { useAuth } from "../../context/AuthContext";
-// 1. გადავარქვით სახელები იმპორტში, რომ კონფლიქტი არ მოხდეს
+import { useGoogleLogin } from "@react-oauth/google";
+
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "../../firebase";
+
 import {
   handleRegister as registerApi,
   handleSignIn as signInApi,
+  handleGoogleAuth as googleAuthApi,
 } from "../../api/authService";
 
 export default function AuthModal({ openModal, closeModal }) {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [authMode, setAuthMode] = useState("signin");
   const [authMethod, setAuthMethod] = useState("phone");
@@ -25,23 +32,51 @@ export default function AuthModal({ openModal, closeModal }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [otpStep, setOtpStep] = useState("enter-phone");
+  const [otpCode, setOtpCode] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState(null);
+
+  useEffect(() => {
+    if (openModal && !window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        { size: "invisible" }
+      );
+    }
+  }, [openModal]);
+
   const handleClose = () => {
+    setOtpStep("enter-phone");
+    setOtpCode("");
+    setError("");
+    setMessage("");
     closeModal();
   };
 
-  const handleSignUp = async () => {
-    if (authMethod === "phone" && !phoneNumber) {
-      setError("Please enter your mobile number");
-      return;
-    }
+  const triggerGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      const result = await googleAuthApi(tokenResponse.access_token);
 
-    if (authMethod === "email" && (!email || !password)) {
-      setError("Please enter your email and password");
-      return;
-    }
+      if (result.success) {
+        localStorage.setItem("token", result.data.token);
+        localStorage.setItem("user", JSON.stringify(result.user));
+        login(result.user);
+        handleClose();
+      } else {
+        setError(result.error);
+      }
+      setLoading(false);
+    },
+    flow: "implicit",
+    onError: () => setError("Google Login Failed"),
+  });
 
-    if (!agreeTerms) {
-      setError("Please agree to the terms and conditions");
+  // 📱 1. SMS-ის გაგზავნა
+  const handleSendSms = async () => {
+    if (!phoneNumber) {
+      setError(t("auth.errors.enterMobileNumber"));
       return;
     }
 
@@ -49,82 +84,94 @@ export default function AuthModal({ openModal, closeModal }) {
     setError("");
     setMessage("");
 
-    const formData = {
-      method: authMethod,
-      agreeTerms,
-      agreeMarketing,
-    };
+    try {
+      const fullPhone = `${countryCode}${phoneNumber}`;
+      const appVerifier = window.recaptchaVerifier;
 
-    if (authMethod === "phone") {
-      formData.phoneNumber = `${countryCode}${phoneNumber}`;
-    } else {
-      formData.email = email;
-      formData.password = password;
+      const confirmation = await signInWithPhoneNumber(
+        auth,
+        fullPhone,
+        appVerifier
+      );
+      setConfirmationResult(confirmation);
+      setOtpStep("enter-otp");
+      setMessage("SMS კოდი გაიგზავნა!");
+    } catch (err) {
+      console.error("SMS Send Error:", err);
+      setError("SMS-ის გაგზავნა ვერ მოხერხდა: " + err.message);
+    } finally {
+      setLoading(false);
     }
-
-    // 2. გამოვიძახეთ registerApi
-    const result = await registerApi(formData);
-
-    if (result.success) {
-      setMessage(result.message);
-      setPhoneNumber("");
-      setEmail("");
-      setPassword("");
-      setAgreeTerms(false);
-      setAgreeMarketing(false);
-      setTimeout(() => {
-        setAuthMode("signin");
-        setMessage("");
-      }, 2000);
-    } else {
-      setError(result.error);
-    }
-
-    setLoading(false);
   };
 
-  const handleSignIn = async () => {
-    if (authMethod === "phone" && !phoneNumber) {
-      setError("Please enter your mobile number");
-      return;
-    }
-
-    if (authMethod === "email" && (!email || !password)) {
-      setError("Please enter your email and password");
+  // 📲 2. SMS კოდის დამოწმება
+  const handleVerifyOtp = async () => {
+    if (!otpCode) {
+      setError("შეიყვანეთ SMS კოდი");
       return;
     }
 
     setLoading(true);
     setError("");
-    setMessage("");
 
-    const formData = {
-      method: authMethod,
-    };
+    try {
+      const result = await confirmationResult.confirm(otpCode);
+      const firebaseToken = await result.user.getIdToken();
 
-    if (authMethod === "phone") {
-      formData.phoneNumber = `${countryCode}${phoneNumber}`;
-    } else {
-      formData.email = email;
-      formData.password = password;
+      const res = await fetch("http://localhost:5001/api/auth/phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firebaseToken }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        login(data.user);
+        setMessage("წარმატებით შეხვედით!");
+        setTimeout(() => handleClose(), 1000);
+      } else {
+        setError(data.message || "ავტორიზაცია ვერ მოხერხდა");
+      }
+    } catch (err) {
+      console.error("OTP Verify Error:", err);
+      setError("არასწორი კოდი!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✉️ Email Sign In / Sign Up ლოგიკა
+  const handleEmailAuth = async () => {
+    if (!email || !password) {
+      setError(t("auth.errors.enterEmailAndPassword"));
+      return;
     }
 
-    // 3. გამოვიძახეთ signInApi (და არა handleSignIn)
-    const result = await signInApi(formData);
-    console.log(result, "result")
+    if (authMode === "signup" && !agreeTerms) {
+      setError(t("auth.errors.agreeTerms"));
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const apiCall = authMode === "signin" ? signInApi : registerApi;
+    const result = await apiCall({
+      email,
+      password,
+      agreeTerms,
+      agreeMarketing,
+    });
 
     if (result.success) {
       localStorage.setItem("token", result.data.token);
       localStorage.setItem("user", JSON.stringify(result.user));
       login(result.user);
       setMessage(result.message);
-      setPhoneNumber("");
-      setEmail("");
-      setPassword("");
-      setTimeout(() => {
-        closeModal();
-        setMessage("");
-      }, 1000);
+      setTimeout(() => handleClose(), 1000);
     } else {
       setError(result.error);
     }
@@ -140,10 +187,10 @@ export default function AuthModal({ openModal, closeModal }) {
     <div className={styles.authModalOverlay} onClick={handleClose}>
       <div
         className={styles.authModalContent}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
+        onClick={(e) => e.stopPropagation()}
       >
+        <div id="recaptcha-container"></div>
+
         <button className={styles.authModalClose} onClick={handleClose}>
           <FiX />
         </button>
@@ -154,187 +201,68 @@ export default function AuthModal({ openModal, closeModal }) {
           </div>
         </div>
 
-        <h2 className={styles.authModalTitle}>Profile</h2>
-        <p className={styles.authModalSubtitle}>
-          {authMode === "signin" ? "Authorize In The System" : "Create Account"}
-        </p>
+        <h2 className={styles.authModalTitle}>{t("auth.title")}</h2>
 
-        {authMode === "signin" ? (
-          <>
-            <div className={styles.authToggle}>
-              <button
-                className={`${styles.authToggleButton} ${
-                  authMethod === "phone" ? styles.authToggleActive : ""
-                }`}
-                onClick={() => setAuthMethod("phone")}
-              >
-                By Phone
-              </button>
-              <button
-                className={`${styles.authToggleButton} ${
-                  authMethod === "email" ? styles.authToggleActive : ""
-                }`}
-                onClick={() => setAuthMethod("email")}
-              >
-                By Email
-              </button>
-            </div>
+        {/* Auth Method Switcher (Phone vs Email) */}
+        <div className={styles.authToggle}>
+          <button
+            className={`${styles.authToggleButton} ${
+              authMethod === "phone" ? styles.authToggleActive : ""
+            }`}
+            onClick={() => {
+              setAuthMethod("phone");
+              setOtpStep("enter-phone");
+              setError("");
+            }}
+          >
+            {t("auth.byPhone")}
+          </button>
+          <button
+            className={`${styles.authToggleButton} ${
+              authMethod === "email" ? styles.authToggleActive : ""
+            }`}
+            onClick={() => {
+              setAuthMethod("email");
+              setError("");
+            }}
+          >
+            {t("auth.byEmail")}
+          </button>
+        </div>
 
-            {authMethod === "phone" ? (
-              <div className={styles.authForm}>
-                <div className={styles.phoneInputContainer}>
-                  <select
-                    className={styles.countryCodeSelect}
-                    value={countryCode}
-                    onChange={(e) => setCountryCode(e.target.value)}
-                  >
-                    <option value="+995">+995</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+49">+49</option>
-                    <option value="+7">+7</option>
-                  </select>
-                  <input
-                    type="tel"
-                    className={styles.authInput}
-                    placeholder="Mobile number"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                </div>
-                <button
-                  className={styles.authPrimaryButton}
-                  onClick={handleSignIn}
-                  disabled={loading}
+        {/* 📱 1. PHONE AUTH (authMode-ის გარეშე!) */}
+        {authMethod === "phone" ? (
+          <div className={styles.authForm}>
+            {otpStep === "enter-phone" ? (
+              <div className={styles.phoneInputContainer}>
+                <select
+                  className={styles.countryCodeSelect}
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
                 >
-                  {loading ? "Signing In..." : "Get Code"}
-                </button>
+                  <option value="+995">+995</option>
+                  <option value="+1">+1</option>
+                  <option value="+44">+44</option>
+                  <option value="+49">+49</option>
+                  <option value="+7">+7</option>
+                </select>
+                <input
+                  type="tel"
+                  className={styles.authInput}
+                  placeholder={t("auth.mobileNumber")}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
               </div>
             ) : (
-              <div className={styles.authForm}>
-                <input
-                  type="email"
-                  className={styles.authInput}
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                  type="password"
-                  className={styles.authInput}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  className={styles.authPrimaryButton}
-                  onClick={handleSignIn}
-                  disabled={loading}
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </button>
-              </div>
+              <input
+                type="text"
+                className={styles.authInput}
+                placeholder="შეიყვანეთ 6-ნიშნა SMS კოდი"
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+              />
             )}
-
-            <button className={styles.authGoogleButton}>
-              <FcGoogle className={styles.authGoogleIcon} />
-              Sign in with Google
-            </button>
-
-            <button
-              className={styles.authSecondaryButton}
-              onClick={() => setAuthMode("signup")}
-            >
-              Sign Up
-            </button>
-          </>
-        ) : (
-          <>
-            <div className={styles.authToggle}>
-              <button
-                className={`${styles.authToggleButton} ${
-                  authMethod === "phone" ? styles.authToggleActive : ""
-                }`}
-                onClick={() => setAuthMethod("phone")}
-              >
-                By Phone
-              </button>
-              <button
-                className={`${styles.authToggleButton} ${
-                  authMethod === "email" ? styles.authToggleActive : ""
-                }`}
-                onClick={() => setAuthMethod("email")}
-              >
-                By Email
-              </button>
-            </div>
-
-            <div className={styles.authForm}>
-              {authMethod === "phone" ? (
-                <div className={styles.phoneInputContainer}>
-                  <select
-                    className={styles.countryCodeSelect}
-                    value={countryCode}
-                    onChange={(e) => setCountryCode(e.target.value)}
-                  >
-                    <option value="+995">+995</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+49">+49</option>
-                    <option value="+7">+7</option>
-                  </select>
-                  <input
-                    type="tel"
-                    className={styles.authInput}
-                    placeholder="Mobile Number"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                </div>
-              ) : (
-                <>
-                  <input
-                    type="email"
-                    className={styles.authInput}
-                    placeholder="Email Address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <input
-                    type="password"
-                    className={styles.authInput}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </>
-              )}
-            </div>
-
-            <div className={styles.authCheckboxes}>
-              <label className={styles.authCheckboxLabel}>
-                <input
-                  type="checkbox"
-                  className={styles.authCheckbox}
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
-                />
-                <span className={styles.authCheckboxText}>
-                  By Clicking On Sign Up Button I Agree To Terms And Conditions
-                </span>
-              </label>
-              <label className={styles.authCheckboxLabel}>
-                <input
-                  type="checkbox"
-                  className={styles.authCheckbox}
-                  checked={agreeMarketing}
-                  onChange={(e) => setAgreeMarketing(e.target.checked)}
-                />
-                <span className={styles.authCheckboxText}>
-                  I Agree To Receive Information/Marketing Messages
-                </span>
-              </label>
-            </div>
 
             {error && <div className={styles.authErrorMessage}>{error}</div>}
             {message && (
@@ -343,25 +271,98 @@ export default function AuthModal({ openModal, closeModal }) {
 
             <button
               className={styles.authPrimaryButton}
-              onClick={handleSignUp}
+              onClick={otpStep === "enter-phone" ? handleSendSms : handleVerifyOtp}
               disabled={loading}
             >
-              {loading ? "Signing Up..." : "Sign Up"}
+              {loading
+                ? t("auth.signingIn")
+                : otpStep === "enter-phone"
+                ? t("auth.getCode")
+                : "დადასტურება"}
             </button>
+          </div>
+        ) : (
+          /* ✉️ 2. EMAIL AUTH (Sign In / Sign Up) */
+          <div className={styles.authForm}>
+            <input
+              type="email"
+              className={styles.authInput}
+              placeholder={t("auth.emailAddress")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              className={styles.authInput}
+              placeholder={t("auth.password")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-            <button className={styles.authGoogleButton}>
-              <FcGoogle className={styles.authGoogleIcon} />
-              Sign in with Google
+            {authMode === "signup" && (
+              <div className={styles.authCheckboxes}>
+                <label className={styles.authCheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    className={styles.authCheckbox}
+                    checked={agreeTerms}
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                  />
+                  <span className={styles.authCheckboxText}>
+                    {t("auth.agreeTerms")}
+                  </span>
+                </label>
+                <label className={styles.authCheckboxLabel}>
+                  <input
+                    type="checkbox"
+                    className={styles.authCheckbox}
+                    checked={agreeMarketing}
+                    onChange={(e) => setAgreeMarketing(e.target.checked)}
+                  />
+                  <span className={styles.authCheckboxText}>
+                    {t("auth.agreeMarketing")}
+                  </span>
+                </label>
+              </div>
+            )}
+
+            {error && <div className={styles.authErrorMessage}>{error}</div>}
+            {message && (
+              <div className={styles.authSuccessMessage}>{message}</div>
+            )}
+
+            <button
+              className={styles.authPrimaryButton}
+              onClick={handleEmailAuth}
+              disabled={loading}
+            >
+              {loading
+                ? t("auth.signingIn")
+                : authMode === "signin"
+                ? t("auth.signInButton")
+                : t("auth.signUpButton")}
             </button>
 
             <button
               className={styles.authSecondaryButton}
-              onClick={() => setAuthMode("signin")}
+              onClick={() =>
+                setAuthMode(authMode === "signin" ? "signup" : "signin")
+              }
             >
-              Sign In
+              {authMode === "signin"
+                ? t("auth.signUpButton")
+                : t("auth.signInButton")}
             </button>
-          </>
+          </div>
         )}
+
+        <button
+          className={styles.authGoogleButton}
+          onClick={triggerGoogleLogin}
+        >
+          <FcGoogle className={styles.authGoogleIcon} />
+          {t("auth.signInWithGoogle")}
+        </button>
       </div>
     </div>
   );

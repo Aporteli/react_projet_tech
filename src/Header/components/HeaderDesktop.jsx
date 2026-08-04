@@ -108,12 +108,14 @@ export default function HeaderDesktop() {
               <HeaderIcons />
               {isAuthenticated ? (
                 <button
-                  className={styles.loginButton}
+                  className={styles.loginButtonAuth}
                   onClick={() => navigate("/user")}
                 >
-                  <div className={styles.loginButtonContent}>
-                    <FiUser size={22} />{" "}
-                    <p className={styles.loginButtonText}>User</p>
+                  <div className={styles.loginButtonContentAuth}>
+                    <div className={styles.userAvatar}>
+                      <FiUser size={22} />
+                    </div>
+                    
                   </div>
                 </button>
               ) : (
