@@ -88,7 +88,7 @@ export default function SubCategoryPage() {
       const requestBody = {
         ...activeFilters,
         category: slug, // უზრუნველყოფს, რომ სწორი კატეგორია გაიგზავნოს
-        lang: i18n.language,
+        lang: i18n.language.split("-")[0],
       };
 
       const response = await fetch(

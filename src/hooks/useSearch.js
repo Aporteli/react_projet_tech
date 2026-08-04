@@ -18,7 +18,7 @@ export const useSearch = (navigate) => {
     setSearchLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language}`,
+        `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language.split("-")[0]}`,
       );
       const data = await response.json();
       setSearchResults(data);

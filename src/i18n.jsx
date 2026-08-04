@@ -21,7 +21,8 @@ i18n
   .use(initReactI18next) // აკავშირებს react-i18next-თან
   .init({
     resources,
-    fallbackLng: "en", // თუ ბრაუზერის ენა ვერ დადგინდა, ჩაირთვება ქართული
+    fallbackLng: "en", // თუ ბრაუზერის ენა ვერ დადგინდა, ჩაირთვება ინგლისური
+    load: "languageOnly", // 👈 ეს დაიცავს აპლიკაციას! "en-GB" ან "en-US" ყოველთვის გადაკეთდება "en"-ად
     debug: false, // დეველოპმენტში შეგიძლია true ჩაწერო ლოგების სანახავად
     interpolation: {
       escapeValue: false, // React თავად იცავს XSS-სგან, ამიტომ აქ false გვინდა

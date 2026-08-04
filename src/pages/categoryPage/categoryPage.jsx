@@ -41,7 +41,7 @@ function CategoryPage() {
   useEffect(() => {
     setLoading(true);
     fetch(
-      `http://localhost:5001/api/categories/single/${slug}?lang=${i18n.language}`,
+    `http://localhost:5001/api/categories/single/${slug}?lang=${i18n.language.split("-")[0]}`
     )
       .then((res) => {
         if (!res.ok) throw new Error("კატეგორია ვერ მოიძებნა");

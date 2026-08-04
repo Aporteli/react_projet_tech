@@ -7,7 +7,6 @@ import SiteLogo from "../../icons/siteLogoOnSignIn";
 import { useModal } from "../../hooks/useModal";
 import { useAuth } from "../../context/AuthContext";
 import { useGoogleLogin } from "@react-oauth/google";
-
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../firebase";
 
@@ -41,7 +40,7 @@ export default function AuthModal({ openModal, closeModal }) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
         "recaptcha-container",
-        { size: "invisible" }
+        { size: "invisible" },
       );
     }
   }, [openModal]);
@@ -52,6 +51,18 @@ export default function AuthModal({ openModal, closeModal }) {
     setError("");
     setMessage("");
     closeModal();
+    setPhoneNumber("");
+    setLoading(false);
+    setConfirmationResult(null);
+    setOtpCode?.("");
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      } catch (e) {
+        console.error("Recaptcha clear error:", e);
+      }
+    }
   };
 
   const triggerGoogleLogin = useGoogleLogin({
@@ -61,7 +72,12 @@ export default function AuthModal({ openModal, closeModal }) {
 
       if (result.success) {
         localStorage.setItem("token", result.data.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
+
+        // 🛠️ შესწორება: ვამოწმებთ user-ის არსებობას
+        if (result.user) {
+          localStorage.setItem("user", JSON.stringify(result.user));
+        }
+
         login(result.user);
         handleClose();
       } else {
@@ -91,7 +107,7 @@ export default function AuthModal({ openModal, closeModal }) {
       const confirmation = await signInWithPhoneNumber(
         auth,
         fullPhone,
-        appVerifier
+        appVerifier,
       );
       setConfirmationResult(confirmation);
       setOtpStep("enter-otp");
@@ -128,7 +144,12 @@ export default function AuthModal({ openModal, closeModal }) {
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // 🛠️ შესწორება: ვამოწმებთ user-ის არსებობას
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
         login(data.user);
         setMessage("წარმატებით შეხვედით!");
         setTimeout(() => handleClose(), 1000);
@@ -160,6 +181,7 @@ export default function AuthModal({ openModal, closeModal }) {
 
     const apiCall = authMode === "signin" ? signInApi : registerApi;
     const result = await apiCall({
+      method: "email",
       email,
       password,
       agreeTerms,
@@ -168,7 +190,12 @@ export default function AuthModal({ openModal, closeModal }) {
 
     if (result.success) {
       localStorage.setItem("token", result.data.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
+
+      // 🛠️ შესწორება: ვამოწმებთ user-ის არსებობას
+      if (result.user) {
+        localStorage.setItem("user", JSON.stringify(result.user));
+      }
+
       login(result.user);
       setMessage(result.message);
       setTimeout(() => handleClose(), 1000);
@@ -177,6 +204,21 @@ export default function AuthModal({ openModal, closeModal }) {
     }
 
     setLoading(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (authMethod === "phone") {
+        if (otpStep === "enter-phone") {
+          handleSendSms();
+        } else {
+          handleVerifyOtp();
+        }
+      } else {
+        handleEmailAuth();
+      }
+    }
   };
 
   useModal(openModal);
@@ -252,6 +294,7 @@ export default function AuthModal({ openModal, closeModal }) {
                   placeholder={t("auth.mobileNumber")}
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             ) : (
@@ -261,6 +304,7 @@ export default function AuthModal({ openModal, closeModal }) {
                 placeholder="შეიყვანეთ 6-ნიშნა SMS კოდი"
                 value={otpCode}
                 onChange={(e) => setOtpCode(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             )}
 
@@ -271,14 +315,16 @@ export default function AuthModal({ openModal, closeModal }) {
 
             <button
               className={styles.authPrimaryButton}
-              onClick={otpStep === "enter-phone" ? handleSendSms : handleVerifyOtp}
+              onClick={
+                otpStep === "enter-phone" ? handleSendSms : handleVerifyOtp
+              }
               disabled={loading}
             >
               {loading
                 ? t("auth.signingIn")
                 : otpStep === "enter-phone"
-                ? t("auth.getCode")
-                : "დადასტურება"}
+                  ? t("auth.getCode")
+                  : "დადასტურება"}
             </button>
           </div>
         ) : (
@@ -290,6 +336,7 @@ export default function AuthModal({ openModal, closeModal }) {
               placeholder={t("auth.emailAddress")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <input
               type="password"
@@ -297,6 +344,7 @@ export default function AuthModal({ openModal, closeModal }) {
               placeholder={t("auth.password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
 
             {authMode === "signup" && (
@@ -307,6 +355,7 @@ export default function AuthModal({ openModal, closeModal }) {
                     className={styles.authCheckbox}
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
+                    onKeyDown={handleKeyDown}
                   />
                   <span className={styles.authCheckboxText}>
                     {t("auth.agreeTerms")}
@@ -318,6 +367,7 @@ export default function AuthModal({ openModal, closeModal }) {
                     className={styles.authCheckbox}
                     checked={agreeMarketing}
                     onChange={(e) => setAgreeMarketing(e.target.checked)}
+                    onKeyDown={handleKeyDown}
                   />
                   <span className={styles.authCheckboxText}>
                     {t("auth.agreeMarketing")}
@@ -339,8 +389,8 @@ export default function AuthModal({ openModal, closeModal }) {
               {loading
                 ? t("auth.signingIn")
                 : authMode === "signin"
-                ? t("auth.signInButton")
-                : t("auth.signUpButton")}
+                  ? t("auth.signInButton")
+                  : t("auth.signUpButton")}
             </button>
 
             <button
@@ -363,6 +413,35 @@ export default function AuthModal({ openModal, closeModal }) {
           <FcGoogle className={styles.authGoogleIcon} />
           {t("auth.signInWithGoogle")}
         </button>
+
+        <p
+          style={{
+            fontSize: "12px",
+            color: "#9ca3af",
+            marginTop: "8px",
+            textAlign: "center",
+          }}
+        >
+          {t("auth.recaptcha.protected")}{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            style={{ textDecoration: "underline", color: "inherit" }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("auth.recaptcha.privacyPolicy")}
+          </a>{" "}
+          {t("auth.recaptcha.and")}{" "}
+          <a
+            href="https://policies.google.com/terms"
+            style={{ textDecoration: "underline", color: "inherit" }}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("auth.recaptcha.termsOfService")}
+          </a>{" "}
+          {t("auth.recaptcha.apply")}
+        </p>
       </div>
     </div>
   );

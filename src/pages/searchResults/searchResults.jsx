@@ -3,9 +3,13 @@ import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styles from "./searchResults.module.css";
 import { useTranslation } from "react-i18next";
+import HeartIconLight from "../../icons/heartIconLight";
+import { ShoppingCart, RefreshCw } from "lucide-react";
+import { useCart } from "../../context/CartContext";
 
 function SearchResults() {
   const { t, i18n } = useTranslation();
+  const { addToCart } = useCart();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
   const [products, setProducts] = useState([]);
@@ -24,7 +28,7 @@ function SearchResults() {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language}`,
+          `http://localhost:5001/api/search?q=${encodeURIComponent(query)}&lang=${i18n.language.split("-")[0]}`,
         );
         const data = await response.json();
         setProducts(data);
@@ -39,6 +43,11 @@ function SearchResults() {
 
     fetchSearchResults();
   }, [query, i18n.language]);
+
+  const handleAddToCart = (product, e) => {
+    e.preventDefault();
+    addToCart(product);
+  };
 
   return (
     <div className={styles.container}>
@@ -82,13 +91,23 @@ function SearchResults() {
       {!loading && !error && products.length > 0 && (
         <div className={styles.productsGrid}>
           {products.map((product) => (
-            <div className={styles.productCard}>
+            <div key={product.id} className={styles.productCard}>
               <Link
-                key={product.id}
                 to={`/product/${product.slug}`}
                 className={styles.productCardLink}
               >
                 <div className={styles.productImageContainer}>
+                  <div className={styles.buttonsContainer}>
+                    <button
+                      className={styles.compareBtn}
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <RefreshCw size={18} />
+                    </button>
+                    <button className={styles.heartBtn}>
+                      <HeartIconLight />
+                    </button>
+                  </div>
                   <img
                     src={`http://localhost:5001/uploads/${product.image}`}
                     alt={product.name}
@@ -106,6 +125,20 @@ function SearchResults() {
                   {product.discount_price && (
                     <p className={styles.originalPrice}>{product.price} ₾</p>
                   )}
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.addToCartBtn}
+                      onClick={(e) => handleAddToCart(product, e)}
+                    >
+                      <ShoppingCart size={15} />
+                    </button>
+                    <button
+                      className={styles.buyNowBtn}
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      {t("discountSlider.buyNow")}
+                    </button>
+                  </div>
                 </div>
               </Link>
             </div>

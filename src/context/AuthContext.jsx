@@ -7,7 +7,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem("user");
-      return savedUser ? JSON.parse(savedUser) : null;
+      // 🛠️ შესწორება: ვამოწმებთ რომ არ იყოს ტექსტი "undefined"
+      return (savedUser && savedUser !== "undefined") ? JSON.parse(savedUser) : null;
     } catch (error) {
       console.error("LocalStorage-ის წაკითხვის შეცდომა:", error);
       return null;
@@ -25,7 +26,8 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
 
-    if (savedUser && savedToken) {
+    // 🛠️ შესწორება: აქაც ვამოწმებთ "undefined"-ს
+    if (savedUser && savedUser !== "undefined" && savedToken) {
       setUser(JSON.parse(savedUser));
       setToken(savedToken);
     }
@@ -37,7 +39,11 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     setToken(userToken);
 
-    localStorage.setItem("user", JSON.stringify(userData));
+    // 🛠️ შესწორება: LocalStorage-ში შეინახავს მხოლოდ მაშინ, თუ userData ნამდვილად არსებობს
+    if (userData) {
+      localStorage.setItem("user", JSON.stringify(userData));
+    }
+    
     if (userToken) {
       localStorage.setItem("token", userToken);
     }

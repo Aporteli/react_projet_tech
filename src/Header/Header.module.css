@@ -1244,6 +1244,7 @@ Auth Modal Styles
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: 18px;
 }
 
 .phoneInputContainer {
@@ -1294,7 +1295,7 @@ Auth Modal Styles
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-  margin-bottom: 12px;
+  /* margin-bottom: 12px; */
 }
 
 .authPrimaryButton:hover {
