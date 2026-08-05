@@ -4,6 +4,7 @@ import { ShoppingCart, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../../../context/CartContext';
 import { useWishlist } from '../../../../context/WishlistContext';
+import { useCompare } from '../../../../context/CompareContext';
 import styles from './productCard.module.css';
 
 const BASE_URL = 'http://localhost:5001';
@@ -11,10 +12,15 @@ const BASE_URL = 'http://localhost:5001';
 export default function ProductCard({ product, t }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { toggleCompare, isInCompare, getCompareCategory } = useCompare();
   const currentP =
-    Number(product.discountPrice) && Number(product.discountPrice) < Number(product.price)
-      ? Number(product.discountPrice)
+    Number(product.discount_price) && Number(product.discount_price) < Number(product.price)
+      ? Number(product.discount_price)
       : Number(product.price);
+
+  const productCategory = product.category_id;
+  const compareCategory = getCompareCategory();
+  const canCompare = !compareCategory || compareCategory === productCategory;
 
   const handleAddToCart = e => {
     e.preventDefault();
@@ -26,12 +32,24 @@ export default function ProductCard({ product, t }) {
     toggleWishlist(product);
   };
 
+  const handleCompareToggle = e => {
+    e.preventDefault();
+    if (canCompare) {
+      toggleCompare(product);
+    }
+  };
+
+  console.log(product.price, product.discount_price);
   return (
     <div className={styles.flexDiv}>
       <Link className={styles.card}>
         <div className={styles.cardImageContainer}>
           <div className={styles.buttonsContainer}>
-            <button className={styles.compareBtn} onClick={e => e.preventDefault()}>
+            <button
+              className={`${styles.compareBtn} ${isInCompare(product.id) ? styles.compareBtnActive : ''} ${!canCompare ? styles.compareBtnDisabled : ''}`}
+              onClick={handleCompareToggle}
+              disabled={!canCompare}
+              title={!canCompare ? 'Cannot compare products from different categories' : ''}>
               <RefreshCw size={18} />
             </button>
             <button className={styles.heartBtn} onClick={handleWishlistToggle}>
@@ -50,7 +68,7 @@ export default function ProductCard({ product, t }) {
           <div className={styles.priceSection}>
             <div className={styles.priceContainer}>
               <span className={styles.currentPrice}>{currentP} ₾</span>
-              {product.discountPrice && Number(product.discountPrice) < Number(product.price) && (
+              {product.discount_price && Number(product.discount_price) < Number(product.price) && (
                 <span className={styles.oldPrice}>{Number(product.price)} ₾</span>
               )}
             </div>

@@ -5,7 +5,7 @@
 }
 
 .title {
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
   font-size: 28px;
   font-weight: 600;
   color: black;
@@ -122,7 +122,7 @@
 .productName {
   font-size: 16px;
   font-weight: 500;
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
   color: #1a1a1a;
   line-height: 1.4;
   display: -webkit-box;
@@ -147,13 +147,13 @@
 }
 
 .currentPrice {
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
   font-size: 20px;
   font-weight: 700;
 }
 
 .oldPrice {
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
   font-size: 14px;
   color: #999;
   position: relative;
@@ -161,7 +161,7 @@
 }
 
 .oldPrice::before {
-  content: "";
+  content: '';
   position: absolute;
   left: -5%;
   top: 50%;
@@ -175,7 +175,7 @@
 .perMonthFrom {
   font-size: 12px;
   color: #666;
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
 }
 
 .actionButtons {
@@ -187,17 +187,13 @@
 .buyNowBtn {
   flex: 1;
   padding: 12px 16px;
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-1),
-    var(--color-dark-purple-1)
-  );
+  background: linear-gradient(135deg, var(--color-purple-1), var(--color-dark-purple-1));
   color: white;
   border: none;
   border-radius: 50px;
   font-size: 14px;
   font-weight: 600;
-  font-family: "Inter", serif;
+  font-family: 'Inter', serif;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -207,11 +203,7 @@
 }
 
 .buyNowBtn:hover {
-  background: linear-gradient(
-    135deg,
-    var(--color-dark-purple-1),
-    var(--color-purple-1)
-  );
+  background: linear-gradient(135deg, var(--color-dark-purple-1), var(--color-purple-1));
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(99, 89, 210, 0.3);
 }
@@ -252,6 +244,30 @@
   border-color: var(--color-purple-1);
   color: var(--color-purple-1);
   transform: translateY(-2px);
+}
+
+.compareBtnActive {
+  background: var(--color-purple-1);
+  color: white;
+  border-color: var(--color-purple-1);
+}
+
+.compareBtnActive:hover {
+  background: var(--color-dark-purple-1);
+  border-color: var(--color-dark-purple-1);
+  color: white;
+}
+
+.compareBtnDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.compareBtnDisabled:hover {
+  background: var(--color-white);
+  border-color: #e0e0e0;
+  color: #665;
+  transform: none;
 }
 
 .heartBtn {
@@ -301,11 +317,7 @@
 }
 
 .Btn {
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-2),
-    var(--color-dark-purple-1)
-  );
+  background: linear-gradient(135deg, var(--color-purple-2), var(--color-dark-purple-1));
   color: white;
   border: none;
 }
@@ -318,11 +330,7 @@
 }
 
 .Btn:hover {
-  background: linear-gradient(
-    135deg,
-    var(--color-purple-1),
-    var(--color-purple-4)
-  );
+  background: linear-gradient(135deg, var(--color-purple-1), var(--color-purple-4));
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 4px 15px rgba(99, 89, 210, 0.4);
 }

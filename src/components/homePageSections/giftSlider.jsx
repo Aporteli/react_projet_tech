@@ -6,10 +6,12 @@ import { ChevronLeft, ChevronRight, ShoppingCart, RefreshCw } from 'lucide-react
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCompare } from '../../context/CompareContext';
 
 export default function GiftSlider({ images }) {
   const { t } = useTranslation();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { toggleCompare, isInCompare, getCompareCategory } = useCompare();
 
   // Ref-ები ImageSlider-ის პრინციპით
   const dragStartX = useRef(0);
@@ -186,6 +188,17 @@ export default function GiftSlider({ images }) {
     toggleWishlist(product);
   };
 
+  const handleCompareToggle = (product, e) => {
+    e.preventDefault();
+    const compareCategory = getCompareCategory();
+    const productCategory = product.subCategory || product.parentCategor;
+    const canCompare = !compareCategory || compareCategory === productCategory;
+
+    if (canCompare) {
+      toggleCompare(product);
+    }
+  };
+
   return (
     <div
       className={styles.mainDiv}
@@ -211,46 +224,58 @@ export default function GiftSlider({ images }) {
             transform: `translateX(-${translate}px)`,
             transition: isDragging ? 'none' : 'transform 0.3s ease-in-out'
           }}>
-          {images.map(({ url, alt, route, price, oldPrice, discount, name }, index) => (
-            <div key={index} className={styles.flexDiv} style={{ flex: `0 0 ${slideWidth}px` }}>
-              <Link to={route} onClick={handleClick} className={styles.card}>
-                <div className={styles.cardImageContainer}>
-                  {discount && <span className={styles.discountBadge}>-{discount}%</span>}
-                  <div className={styles.buttonsContainer}>
-                    <button className={styles.compareBtn} onClick={e => e.preventDefault()}>
-                      <RefreshCw size={18} />
-                    </button>
-                    <button
-                      className={styles.heartBtn}
-                      onClick={e =>
-                        handleWishlistToggle({ id: index, name, url, route, price, oldPrice, discount }, e)
-                      }>
-                      {isInWishlist(index) ? <HeartIconFilled /> : <HeartIconLight />}
-                    </button>
-                  </div>
-                  <img className={styles.cardImage} src={url} alt={alt} onDragStart={preventImgDrag} loading="lazy" />
-                </div>
-                <div className={styles.cardContent}>
-                  <h4 className={styles.productName}>{name || alt}</h4>
-                  <div className={styles.priceSection}>
-                    <div className={styles.priceContainer}>
-                      <span className={styles.currentPrice}>{price}</span>
-                      {oldPrice && <span className={styles.oldPrice}>{oldPrice}</span>}
+          {images.map(({ url, alt, route, price, oldPrice, discount, name }, index) => {
+            const compareCategory = getCompareCategory();
+            const productCategory = name;
+            const canCompare = !compareCategory || compareCategory === productCategory;
+
+            return (
+              <div key={index} className={styles.flexDiv} style={{ flex: `0 0 ${slideWidth}px` }}>
+                <Link to={route} onClick={handleClick} className={styles.card}>
+                  <div className={styles.cardImageContainer}>
+                    {discount && <span className={styles.discountBadge}>-{discount}%</span>}
+                    <div className={styles.buttonsContainer}>
+                      <button
+                        className={`${styles.compareBtn} ${isInCompare(index) ? styles.compareBtnActive : ''} ${!canCompare ? styles.compareBtnDisabled : ''}`}
+                        onClick={e =>
+                          handleCompareToggle({ id: index, name, url, route, price, oldPrice, discount }, e)
+                        }
+                        disabled={!canCompare}
+                        title={!canCompare ? 'Cannot compare products from different categories' : ''}>
+                        <RefreshCw size={18} />
+                      </button>
+                      <button
+                        className={styles.heartBtn}
+                        onClick={e =>
+                          handleWishlistToggle({ id: index, name, url, route, price, oldPrice, discount }, e)
+                        }>
+                        {isInWishlist(index) ? <HeartIconFilled /> : <HeartIconLight />}
+                      </button>
                     </div>
-                    <div className={styles.perMonthFrom}>{t('discountSlider.perMonthFrom', { price })}</div>
+                    <img className={styles.cardImage} src={url} alt={alt} onDragStart={preventImgDrag} loading="lazy" />
                   </div>
-                  <div className={styles.actionButtons}>
-                    <button className={styles.addToCartBtn} onClick={e => e.preventDefault()}>
-                      <ShoppingCart size={20} />
-                    </button>
-                    <button className={styles.buyNowBtn} onClick={e => e.preventDefault()}>
-                      {t('discountSlider.buyNow')}
-                    </button>
+                  <div className={styles.cardContent}>
+                    <h4 className={styles.productName}>{name || alt}</h4>
+                    <div className={styles.priceSection}>
+                      <div className={styles.priceContainer}>
+                        <span className={styles.currentPrice}>{price}</span>
+                        {oldPrice && <span className={styles.oldPrice}>{oldPrice}</span>}
+                      </div>
+                      <div className={styles.perMonthFrom}>{t('discountSlider.perMonthFrom', { price })}</div>
+                    </div>
+                    <div className={styles.actionButtons}>
+                      <button className={styles.addToCartBtn} onClick={e => e.preventDefault()}>
+                        <ShoppingCart size={20} />
+                      </button>
+                      <button className={styles.buyNowBtn} onClick={e => e.preventDefault()}>
+                        {t('discountSlider.buyNow')}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </div>
-          ))}
+                </Link>
+              </div>
+            );
+          })}
         </div>
 
         {/* ღილაკებზე მოვლენის შეჩერება კონფლიქტის ასაცილებლად */}

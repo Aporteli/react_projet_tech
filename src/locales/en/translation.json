@@ -29,7 +29,9 @@
     "compare": {
       "title": "Your compare list is empty",
       "subtitle": "Add items in order to compare them",
-      "button": "Open compare"
+      "button": "Open compare",
+      "items": "Items",
+      "viewCompare": "View Compare"
     },
     "subcategories": {
       "soon": "Will be available soon..."
@@ -469,7 +471,14 @@
   },
   "compare": {
     "title": "Compare Products",
-    "empty": "No products to compare"
+    "empty": "No products to compare",
+    "clear": "Clear All",
+    "continueShopping": "Continue Shopping",
+    "addProduct": "Add Product to Compare",
+    "product": "Product",
+    "price": "Price",
+    "searchPlaceholder": "Search products...",
+    "noResults": "No products found"
   },
   "searchResults": {
     "title": "Search Results",

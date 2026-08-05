@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import CartIcon from '../../icons/cartIcon.jsx';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCompare } from '../../context/CompareContext';
 import HeartIcon from '../../icons/heartIcon.jsx';
 import CompareIcon from '../../icons/compareIcon.jsx';
 import { CartIconTooltip } from '../../components/tooltips/cartIconTooltip.jsx';
@@ -13,8 +14,10 @@ import styles from '../Header.module.css';
 export default function HeaderIcons() {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
+  const { compareCount } = useCompare();
   const [cartAnimation, setCartAnimation] = useState(false);
   const [wishlistAnimation, setWishlistAnimation] = useState(false);
+  const [compareAnimation, setCompareAnimation] = useState(false);
   const [cartHover, setCartHover] = useState(false);
   const [wishlistHover, setWishlistHover] = useState(false);
   const [compareHover, setCompareHover] = useState(false);
@@ -36,6 +39,15 @@ export default function HeaderIcons() {
       }, 500);
     }
   }, [wishlistCount]);
+
+  useEffect(() => {
+    if (compareCount > 0) {
+      setCompareAnimation(true);
+      setTimeout(() => {
+        setCompareAnimation(false);
+      }, 500);
+    }
+  }, [compareCount]);
 
   return (
     <div className={styles.headerCart}>
@@ -63,8 +75,9 @@ export default function HeaderIcons() {
         className={styles.cartIconWrapper}
         onMouseEnter={() => setCompareHover(true)}
         onMouseLeave={() => setCompareHover(false)}>
-        <Link to="/compare" className={styles.iconLink}>
+        <Link to="/compare" className={`${styles.iconLink} ${compareAnimation ? styles.cartJump : ''}`}>
           <CompareIcon />
+          {compareCount > 0 && <span className={styles.cartCount}>{compareCount}</span>}
         </Link>
         {compareHover && <CompareTooltip />}
       </div>
