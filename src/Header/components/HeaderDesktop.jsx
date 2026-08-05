@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FiMenu, FiUser } from "react-icons/fi";
-import { useTranslation } from "react-i18next";
-import styles from "../Header.module.css";
-import SiteLogo from "../../icons/siteLogo.jsx";
-import CategoriesDropdown from "../../components/categoriesDropdown.jsx";
-import { useHeaderScroll } from "../../hooks/useHeaderScroll";
-import { useSearch } from "../../hooks/useSearch";
-import { useLanguage } from "../../hooks/useLanguage";
-import { useModal } from "../../hooks/useModal";
-import { useAuth } from "../../context/AuthContext";
-import SearchModal from "./SearchModal";
-import LanguageSwitcher from "./LanguageSwitcher";
-import HeaderIcons from "./HeaderIcons";
-import SearchBar from "./SearchBar";
-import AuthModal from "./AuthModal";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiMenu, FiUser } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
+import styles from '../Header.module.css';
+import SiteLogo from '../../icons/siteLogo.jsx';
+import CategoriesDropdown from '../../components/categoriesDropdown.jsx';
+import { useHeaderScroll } from '../../hooks/useHeaderScroll';
+import { useSearch } from '../../hooks/useSearch';
+import { useLanguage } from '../../hooks/useLanguage';
+import { useModal } from '../../hooks/useModal';
+import { useAuth } from '../../context/AuthContext';
+import SearchModal from './SearchModal';
+import LanguageSwitcher from './LanguageSwitcher';
+import HeaderIcons from './HeaderIcons';
+import SearchBar from './SearchBar';
+import AuthModal from './AuthModal';
 
 export default function HeaderDesktop() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const headerState = useHeaderScroll(80);
   const activeClass = styles[headerState];
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -33,15 +33,11 @@ export default function HeaderDesktop() {
     searchLoading,
     handleSearch,
     clearSearch,
-    t: searchT,
+    t: searchT
   } = useSearch(navigate);
 
-  const {
-    lengDropdownOpen,
-    currentLanguage,
-    toggleLanguageDropdown,
-    changeLanguage,
-  } = useLanguage();
+  const { lengDropdownOpen, currentLanguage, toggleLanguageDropdown, changeLanguage } =
+    useLanguage();
 
   useModal(openModal);
 
@@ -54,8 +50,8 @@ export default function HeaderDesktop() {
     clearSearch();
   };
 
-  const handleSearchSubmit = (e) => {
-    if (e.key === "Enter" && searchQuery.trim().length >= 2) {
+  const handleSearchSubmit = e => {
+    if (e.key === 'Enter' && searchQuery.trim().length >= 2) {
       closeModalHandler();
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
@@ -86,13 +82,10 @@ export default function HeaderDesktop() {
             <div
               className={styles.categoriesContainer}
               onMouseEnter={() => setCategoryOpen(true)}
-              onMouseLeave={() => setCategoryOpen(false)}
-            >
+              onMouseLeave={() => setCategoryOpen(false)}>
               <button className={styles.categoriesButton}>
-                <FiMenu className={styles.menuIcon} />{" "}
-                <p className={styles.categoriesButtonText}>
-                  {t("header.categories")}
-                </p>
+                <FiMenu className={styles.menuIcon} />{' '}
+                <p className={styles.categoriesButtonText}>{t('header.categories')}</p>
               </button>
 
               {categoryOpen && <CategoriesDropdown />}
@@ -107,27 +100,18 @@ export default function HeaderDesktop() {
               />
               <HeaderIcons />
               {isAuthenticated ? (
-                <button
-                  className={styles.loginButtonAuth}
-                  onClick={() => navigate("/user")}
-                >
+                <button className={styles.loginButtonAuth} onClick={() => navigate('/user')}>
                   <div className={styles.loginButtonContentAuth}>
                     <div className={styles.userAvatar}>
                       <FiUser size={22} />
                     </div>
-                    
                   </div>
                 </button>
               ) : (
-                <button
-                  className={styles.loginButton}
-                  onClick={() => setIsAuthModalOpen(true)}
-                >
+                <button className={styles.loginButton} onClick={() => setIsAuthModalOpen(true)}>
                   <div className={styles.loginButtonContent}>
-                    <FiUser size={22} />{" "}
-                    <p className={styles.loginButtonText}>
-                      {t("header.signIn")}
-                    </p>
+                    <FiUser size={22} />{' '}
+                    <p className={styles.loginButtonText}>{t('header.signIn')}</p>
                   </div>
                 </button>
               )}
@@ -142,10 +126,7 @@ export default function HeaderDesktop() {
           </div>
         </header>
       </div>
-      <AuthModal
-        openModal={isAuthModalOpen}
-        closeModal={() => setIsAuthModalOpen(false)}
-      />
+      <AuthModal openModal={isAuthModalOpen} closeModal={() => setIsAuthModalOpen(false)} />
     </>
   );
 }

@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiMenu } from "react-icons/fi";
-import { IoIosSearch } from "react-icons/io";
-import { useTranslation } from "react-i18next";
-import styles from "../Header.module.css";
-import SiteLogo from "../../icons/siteLogo.jsx";
-import { useHeaderScroll } from "../../hooks/useHeaderScroll";
-import { useSearch } from "../../hooks/useSearch";
-import { useLanguage } from "../../hooks/useLanguage";
-import { useModal } from "../../hooks/useModal";
-import { useAuth } from "../../context/AuthContext";
-import SearchModal from "./SearchModal";
-import LanguageSwitcher from "./LanguageSwitcher";
-import BottomNav from "./BottomNav";
-import TabletCategoryPanel from "./TabletCategoryPanel";
-import AuthModal from "./AuthModal";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiMenu } from 'react-icons/fi';
+import { IoIosSearch } from 'react-icons/io';
+import { useTranslation } from 'react-i18next';
+import styles from '../Header.module.css';
+import SiteLogo from '../../icons/siteLogo.jsx';
+import { useHeaderScroll } from '../../hooks/useHeaderScroll';
+import { useSearch } from '../../hooks/useSearch';
+import { useLanguage } from '../../hooks/useLanguage';
+import { useModal } from '../../hooks/useModal';
+import { useAuth } from '../../context/AuthContext';
+import SearchModal from './SearchModal';
+import LanguageSwitcher from './LanguageSwitcher';
+import BottomNav from './BottomNav';
+import TabletCategoryPanel from './TabletCategoryPanel';
+import AuthModal from './AuthModal';
 
 export default function HeaderTablet() {
   const { t, i18n } = useTranslation();
@@ -33,15 +33,11 @@ export default function HeaderTablet() {
     searchLoading,
     handleSearch,
     clearSearch,
-    t: searchT,
+    t: searchT
   } = useSearch(navigate);
 
-  const {
-    lengDropdownOpen,
-    currentLanguage,
-    toggleLanguageDropdown,
-    changeLanguage,
-  } = useLanguage();
+  const { lengDropdownOpen, currentLanguage, toggleLanguageDropdown, changeLanguage } =
+    useLanguage();
 
   useModal(openModal);
 
@@ -54,8 +50,8 @@ export default function HeaderTablet() {
     clearSearch();
   };
 
-  const handleSearchSubmit = (e) => {
-    if (e.key === "Enter" && searchQuery.trim().length >= 2) {
+  const handleSearchSubmit = e => {
+    if (e.key === 'Enter' && searchQuery.trim().length >= 2) {
       closeModalHandler();
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
@@ -80,8 +76,7 @@ export default function HeaderTablet() {
           <div className={styles.tabletHeaderContent}>
             <button
               className={styles.tabletCategoriesButton}
-              onClick={() => setCategoryOpen(!categoryOpen)}
-            >
+              onClick={() => setCategoryOpen(!categoryOpen)}>
               <FiMenu className={styles.tabletMenuIcon} />
             </button>
             <button className={styles.tabletLogoButton}>
@@ -89,10 +84,7 @@ export default function HeaderTablet() {
             </button>
 
             <div className={styles.tabletHeaderActions}>
-              <button
-                className={styles.tabletSearchButton}
-                onClick={openModalHandler}
-              >
+              <button className={styles.tabletSearchButton} onClick={openModalHandler}>
                 <IoIosSearch />
               </button>
               <LanguageSwitcher
@@ -106,18 +98,9 @@ export default function HeaderTablet() {
           </div>
         </header>
       </div>
-      <BottomNav
-        onSignInClick={() => setIsAuthModalOpen(true)}
-        isAuthenticated={isAuthenticated}
-      />
-      <TabletCategoryPanel
-        categoryOpen={categoryOpen}
-        setCategoryOpen={setCategoryOpen}
-      />
-      <AuthModal
-        openModal={isAuthModalOpen}
-        closeModal={() => setIsAuthModalOpen(false)}
-      />
+      <BottomNav onSignInClick={() => setIsAuthModalOpen(true)} isAuthenticated={isAuthenticated} />
+      <TabletCategoryPanel categoryOpen={categoryOpen} setCategoryOpen={setCategoryOpen} />
+      <AuthModal openModal={isAuthModalOpen} closeModal={() => setIsAuthModalOpen(false)} />
     </>
   );
 }

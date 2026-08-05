@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import CartIcon from "../../icons/cartIcon.jsx";
-import { useCart } from "../../context/CartContext";
-import HeartIcon from "../../icons/heartIcon.jsx";
-import CompareIcon from "../../icons/compareIcon.jsx";
-import { CartIconTooltip } from "../../components/tooltips/cartIconTooltip.jsx";
-import { WishlistTooltip } from "../../components/tooltips/wishlistTooltip.jsx";
-import { CompareTooltip } from "../../components/tooltips/compareTooltip.jsx";
-import styles from "../Header.module.css";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import CartIcon from '../../icons/cartIcon.jsx';
+import { useCart } from '../../context/CartContext';
+import HeartIcon from '../../icons/heartIcon.jsx';
+import CompareIcon from '../../icons/compareIcon.jsx';
+import { CartIconTooltip } from '../../components/tooltips/cartIconTooltip.jsx';
+import { WishlistTooltip } from '../../components/tooltips/wishlistTooltip.jsx';
+import { CompareTooltip } from '../../components/tooltips/compareTooltip.jsx';
+import styles from '../Header.module.css';
 
 export default function HeaderIcons() {
   const { cartCount } = useCart();
@@ -30,24 +30,17 @@ export default function HeaderIcons() {
       <div
         className={styles.cartIconWrapper}
         onMouseEnter={() => setCartHover(true)}
-        onMouseLeave={() => setCartHover(false)}
-      >
-        <Link
-          to="/cart"
-          className={`${styles.iconLink} ${cartAnimation ? styles.cartJump : ""}`}
-        >
+        onMouseLeave={() => setCartHover(false)}>
+        <Link to="/cart" className={`${styles.iconLink} ${cartAnimation ? styles.cartJump : ''}`}>
           <CartIcon />
-          {cartCount > 0 && (
-            <span className={styles.cartCount}>{cartCount}</span>
-          )}
+          {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
         </Link>
         {cartHover && <CartIconTooltip />}
       </div>
       <div
         className={styles.cartIconWrapper}
         onMouseEnter={() => setWishlistHover(true)}
-        onMouseLeave={() => setWishlistHover(false)}
-      >
+        onMouseLeave={() => setWishlistHover(false)}>
         <Link to="/wishlist" className={styles.iconLink}>
           <HeartIcon />
         </Link>
@@ -56,8 +49,7 @@ export default function HeaderIcons() {
       <div
         className={styles.cartIconWrapper}
         onMouseEnter={() => setCompareHover(true)}
-        onMouseLeave={() => setCompareHover(false)}
-      >
+        onMouseLeave={() => setCompareHover(false)}>
         <Link to="/compare" className={styles.iconLink}>
           <CompareIcon />
         </Link>
