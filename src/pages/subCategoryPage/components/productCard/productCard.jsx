@@ -1,22 +1,29 @@
-import HeartIconLight from "../../../../icons/heartIconLight";
-import { ShoppingCart, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useCart } from "../../../../context/CartContext";
-import styles from "./productCard.module.css";
+import HeartIconLight from '../../../../icons/heartIconLight';
+import HeartIconFilled from '../../../../icons/heartIconFilled';
+import { ShoppingCart, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useCart } from '../../../../context/CartContext';
+import { useWishlist } from '../../../../context/WishlistContext';
+import styles from './productCard.module.css';
 
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = 'http://localhost:5001';
 
 export default function ProductCard({ product, t }) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const currentP =
-    Number(product.discountPrice) &&
-    Number(product.discountPrice) < Number(product.price)
+    Number(product.discountPrice) && Number(product.discountPrice) < Number(product.price)
       ? Number(product.discountPrice)
       : Number(product.price);
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = e => {
     e.preventDefault();
     addToCart(product);
+  };
+
+  const handleWishlistToggle = e => {
+    e.preventDefault();
+    toggleWishlist(product);
   };
 
   return (
@@ -24,14 +31,11 @@ export default function ProductCard({ product, t }) {
       <Link className={styles.card}>
         <div className={styles.cardImageContainer}>
           <div className={styles.buttonsContainer}>
-            <button
-              className={styles.compareBtn}
-              onClick={(e) => e.preventDefault()}
-            >
+            <button className={styles.compareBtn} onClick={e => e.preventDefault()}>
               <RefreshCw size={18} />
             </button>
-            <button className={styles.heartBtn}>
-              <HeartIconLight />
+            <button className={styles.heartBtn} onClick={handleWishlistToggle}>
+              {isInWishlist(product.id) ? <HeartIconFilled /> : <HeartIconLight />}
             </button>
           </div>
           <img
@@ -46,23 +50,17 @@ export default function ProductCard({ product, t }) {
           <div className={styles.priceSection}>
             <div className={styles.priceContainer}>
               <span className={styles.currentPrice}>{currentP} ₾</span>
-              {product.discountPrice &&
-                Number(product.discountPrice) < Number(product.price) && (
-                  <span className={styles.oldPrice}>
-                    {Number(product.price)} ₾
-                  </span>
-                )}
+              {product.discountPrice && Number(product.discountPrice) < Number(product.price) && (
+                <span className={styles.oldPrice}>{Number(product.price)} ₾</span>
+              )}
             </div>
           </div>
           <div className={styles.actionButtons}>
             <button className={styles.addToCartBtn} onClick={handleAddToCart}>
               <ShoppingCart size={15} />
             </button>
-            <button
-              className={styles.buyNowBtn}
-              onClick={(e) => e.preventDefault()}
-            >
-              {t("discountSlider.buyNow")}
+            <button className={styles.buyNowBtn} onClick={e => e.preventDefault()}>
+              {t('discountSlider.buyNow')}
             </button>
           </div>
         </div>

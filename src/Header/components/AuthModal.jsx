@@ -48,6 +48,7 @@ export default function AuthModal({ openModal, closeModal }) {
   }, [openModal]);
 
   const handleClose = () => {
+    setAuthMode('signin');
     setOtpStep('enter-phone');
     setEmail('');
     setPassword('');

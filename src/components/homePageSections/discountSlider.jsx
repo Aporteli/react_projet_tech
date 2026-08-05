@@ -1,17 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import styles from "./discountSlider.module.css";
-import HeartIconLight from "../../icons/heartIconLight";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ShoppingCart,
-  RefreshCw,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useEffect, useRef, useState } from 'react';
+import styles from './discountSlider.module.css';
+import HeartIconLight from '../../icons/heartIconLight';
+import HeartIconFilled from '../../icons/heartIconFilled';
+import { ChevronLeft, ChevronRight, ShoppingCart, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useWishlist } from '../../context/WishlistContext';
 
 export default function DiscountSlider({ images }) {
   const { t } = useTranslation();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   // Ref-ები ImageSlider-ის პრინციპით
   const dragStartX = useRef(0);
@@ -37,8 +35,7 @@ export default function DiscountSlider({ images }) {
   useEffect(() => {
     function updateLayout() {
       if (outerDivRef.current) {
-        const containerWidth =
-          outerDivRef.current.getBoundingClientRect().width;
+        const containerWidth = outerDivRef.current.getBoundingClientRect().width;
         const windowWidth = window.innerWidth;
         let slidesToShow = 5;
 
@@ -67,8 +64,8 @@ export default function DiscountSlider({ images }) {
     }
 
     updateLayout();
-    window.addEventListener("resize", updateLayout);
-    return () => window.removeEventListener("resize", updateLayout);
+    window.addEventListener('resize', updateLayout);
+    return () => window.removeEventListener('resize', updateLayout);
   }, [images.length, imageIndex]); // updateLayout-ის ლოგიკა გადაკეთდა ზუსტ გათვლებზე
 
   // 2. ავტომატური სლაიდერი
@@ -107,14 +104,14 @@ export default function DiscountSlider({ images }) {
   };
 
   // 4. Drag & Touch ლოგიკა (DragDelta და initialTranslate გამოყენებით)
-  const onMouseDown = (e) => {
+  const onMouseDown = e => {
     setIsDragging(true);
     dragStartX.current = e.clientX;
     initialTranslate.current = translate;
     wasDraggedForLink.current = false;
   };
 
-  const onMouseMove = (e) => {
+  const onMouseMove = e => {
     if (!isDragging) return;
     const delta = e.clientX - dragStartX.current;
     dragDelta.current = delta;
@@ -125,14 +122,14 @@ export default function DiscountSlider({ images }) {
     }
   };
 
-  const onTouchStart = (e) => {
+  const onTouchStart = e => {
     setIsDragging(true);
     dragStartX.current = e.touches[0].clientX;
     initialTranslate.current = translate;
     wasDraggedForLink.current = false;
   };
 
-  const onTouchMove = (e) => {
+  const onTouchMove = e => {
     if (!isDragging) return;
     const delta = e.touches[0].clientX - dragStartX.current;
     dragDelta.current = delta;
@@ -151,17 +148,11 @@ export default function DiscountSlider({ images }) {
 
     if (dragDelta.current < -DRAG_THRESHOLD) {
       // მარცხნივ გაწევა (შემდეგი)
-      const slidesToMove = Math.max(
-        1,
-        Math.round(Math.abs(dragDelta.current) / slideWidth),
-      );
+      const slidesToMove = Math.max(1, Math.round(Math.abs(dragDelta.current) / slideWidth));
       newIndex = imageIndex + slidesToMove;
     } else if (dragDelta.current > DRAG_THRESHOLD) {
       // მარჯვნივ გაწევა (წინა)
-      const slidesToMove = Math.max(
-        1,
-        Math.round(Math.abs(dragDelta.current) / slideWidth),
-      );
+      const slidesToMove = Math.max(1, Math.round(Math.abs(dragDelta.current) / slideWidth));
       newIndex = imageIndex - slidesToMove;
     }
 
@@ -185,9 +176,14 @@ export default function DiscountSlider({ images }) {
 
   const onTouchEnd = () => handleDragEnd();
 
-  const preventImgDrag = (e) => e.preventDefault();
-  const handleClick = (e) => {
+  const preventImgDrag = e => e.preventDefault();
+  const handleClick = e => {
     if (wasDraggedForLink.current) e.preventDefault();
+  };
+
+  const handleWishlistToggle = (product, e) => {
+    e.preventDefault();
+    toggleWishlist(product);
   };
 
   return (
@@ -195,9 +191,8 @@ export default function DiscountSlider({ images }) {
       className={styles.mainDiv}
       onDragStart={preventImgDrag}
       onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={onMouseLeave}
-    >
-      <h3 className={styles.title}>{t("discountSlider.title")}</h3>
+      onMouseLeave={onMouseLeave}>
+      <h3 className={styles.title}>{t('discountSlider.title')}</h3>
 
       <div
         ref={outerDivRef}
@@ -208,106 +203,77 @@ export default function DiscountSlider({ images }) {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        onTouchCancel={() => setIsDragging(false)}
-      >
+        onTouchCancel={() => setIsDragging(false)}>
         <div
           ref={sliderRef}
           className={styles.sliderDiv}
           style={{
             transform: `translateX(-${translate}px)`,
-            transition: isDragging ? "none" : "transform 0.3s ease-in-out",
-          }}
-        >
-          {images.map(
-            ({ url, alt, route, price, oldPrice, discount, name }, index) => (
-              <div
-                key={index}
-                className={styles.flexDiv}
-                style={{ flex: `0 0 ${slideWidth}px` }}
-              >
-                <Link to={route} onClick={handleClick} className={styles.card}>
-                  <div className={styles.cardImageContainer}>
-                    {discount && (
-                      <span className={styles.discountBadge}>-{discount}%</span>
-                    )}
-                    <div className={styles.buttonsContainer}>
-                      <button
-                        className={styles.compareBtn}
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <RefreshCw size={18} />
-                      </button>
-                      <button className={styles.heartBtn}>
-                        <HeartIconLight />
-                      </button>
-                    </div>
-                    <img
-                      className={styles.cardImage}
-                      src={url}
-                      alt={alt}
-                      onDragStart={preventImgDrag}
-                      loading="lazy"
-                    />
+            transition: isDragging ? 'none' : 'transform 0.3s ease-in-out'
+          }}>
+          {images.map(({ url, alt, route, price, oldPrice, discount, name }, index) => (
+            <div key={index} className={styles.flexDiv} style={{ flex: `0 0 ${slideWidth}px` }}>
+              <Link to={route} onClick={handleClick} className={styles.card}>
+                <div className={styles.cardImageContainer}>
+                  {discount && <span className={styles.discountBadge}>-{discount}%</span>}
+                  <div className={styles.buttonsContainer}>
+                    <button className={styles.compareBtn} onClick={e => e.preventDefault()}>
+                      <RefreshCw size={18} />
+                    </button>
+                    <button
+                      className={styles.heartBtn}
+                      onClick={e =>
+                        handleWishlistToggle({ id: index, name, url, route, price, oldPrice, discount }, e)
+                      }>
+                      {isInWishlist(index) ? <HeartIconFilled /> : <HeartIconLight />}
+                    </button>
                   </div>
-                  <div className={styles.cardContent}>
-                    <h4 className={styles.productName}>{name || alt}</h4>
-                    <div className={styles.priceSection}>
-                      <div className={styles.priceContainer}>
-                        <span className={styles.currentPrice}>{price}</span>
-                        {oldPrice && (
-                          <span className={styles.oldPrice}>{oldPrice}</span>
-                        )}
-                      </div>
-                      <div className={styles.perMonthFrom}>
-                        {t("discountSlider.perMonthFrom", { price })}
-                      </div>
+                  <img className={styles.cardImage} src={url} alt={alt} onDragStart={preventImgDrag} loading="lazy" />
+                </div>
+                <div className={styles.cardContent}>
+                  <h4 className={styles.productName}>{name || alt}</h4>
+                  <div className={styles.priceSection}>
+                    <div className={styles.priceContainer}>
+                      <span className={styles.currentPrice}>{price}</span>
+                      {oldPrice && <span className={styles.oldPrice}>{oldPrice}</span>}
                     </div>
-                    <div className={styles.actionButtons}>
-                      <button
-                        className={styles.addToCartBtn}
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <ShoppingCart size={20} />
-                      </button>
-                      <button
-                        className={styles.buyNowBtn}
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        {t("discountSlider.buyNow")}
-                      </button>
-                    </div>
+                    <div className={styles.perMonthFrom}>{t('discountSlider.perMonthFrom', { price })}</div>
                   </div>
-                </Link>
-              </div>
-            ),
-          )}
+                  <div className={styles.actionButtons}>
+                    <button className={styles.addToCartBtn} onClick={e => e.preventDefault()}>
+                      <ShoppingCart size={20} />
+                    </button>
+                    <button className={styles.buyNowBtn} onClick={e => e.preventDefault()}>
+                      {t('discountSlider.buyNow')}
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
         </div>
 
         {/* ღილაკებზე მოვლენის შეჩერება კონფლიქტის ასაცილებლად */}
         <button
           className={`${imageIndex === 0 ? styles.BtnStop : styles.Btn} ${styles.left}`}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             showPrevImage();
           }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-        >
+          onMouseDown={e => e.stopPropagation()}
+          onTouchStart={e => e.stopPropagation()}>
           <ChevronLeft size={24} />
         </button>
         <button
           className={`${
-            imageIndex >= Math.max(0, images.length - visibleSlides)
-              ? styles.BtnStop
-              : styles.Btn
+            imageIndex >= Math.max(0, images.length - visibleSlides) ? styles.BtnStop : styles.Btn
           } ${styles.right}`}
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             showNextImage();
           }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-        >
+          onMouseDown={e => e.stopPropagation()}
+          onTouchStart={e => e.stopPropagation()}>
           <ChevronRight size={24} />
         </button>
       </div>

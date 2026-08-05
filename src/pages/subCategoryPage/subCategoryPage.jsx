@@ -1,21 +1,18 @@
-import styles from "./subCategoryPage.module.css";
-import { useParams, useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import {
-  fetchSubCategories,
-  fetchSubCateogryScreenAttributes,
-} from "../../api/categoryService";
-import { useState, useEffect, useRef, useMemo } from "react";
-import PriceFilter from "../../components/priceFilter";
-import ProductCard from "./components/productCard/productCard";
-import FilterDropdown from "./components/filterDropdown/filterDropdown";
-import MobileFilter from "./components/mobileFilter/mobileFilter";
-import SortDropdown from "./components/sortDropdown/sortDropdown";
-import Breadcrumb from "./components/breadcrumb/breadcrumb";
-import MobileFilters from "./components/mobileFilters/mobileFilters";
-import "rc-slider/assets/index.css";
+import styles from './subCategoryPage.module.css';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { fetchSubCategories, fetchSubCateogryScreenAttributes } from '../../api/categoryService';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import PriceFilter from '../../components/priceFilter';
+import ProductCard from './components/productCard/productCard';
+import FilterDropdown from './components/filterDropdown/filterDropdown';
+import MobileFilter from './components/mobileFilter/mobileFilter';
+import SortDropdown from './components/sortDropdown/sortDropdown';
+import Breadcrumb from './components/breadcrumb/breadcrumb';
+import MobileFilters from './components/mobileFilters/mobileFilters';
+import 'rc-slider/assets/index.css';
 
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = 'http://localhost:5001';
 
 export default function SubCategoryPage() {
   const sortRef = useRef(null);
@@ -41,21 +38,21 @@ export default function SubCategoryPage() {
 
   // 2. სწორი activeFilters სთეითი slug-ის მიხედვით
   const [activeFilters, setActiveFilters] = useState({
-    category: slug || "mobile-phones",
-    filters: {},
+    category: slug || 'mobile-phones',
+    filters: {}
   });
 
   // 3. როცა slug იცვლება URL-ში, განვაახლოთ activeFilters
   useEffect(() => {
     setActiveFilters({
       category: slug,
-      filters: {},
+      filters: {}
     });
     setFilteredProducts(null); // ძველი გაფილტრული პროდუქტების გასუფთავება
   }, [slug]);
 
   const handleFilterChange = (attrName, optionValue, isChecked) => {
-    setActiveFilters((prev) => {
+    setActiveFilters(prev => {
       const updatedFilters = { ...prev.filters };
 
       if (!updatedFilters[attrName]) {
@@ -65,9 +62,7 @@ export default function SubCategoryPage() {
       if (isChecked) {
         updatedFilters[attrName].push(optionValue);
       } else {
-        updatedFilters[attrName] = updatedFilters[attrName].filter(
-          (val) => val !== optionValue,
-        );
+        updatedFilters[attrName] = updatedFilters[attrName].filter(val => val !== optionValue);
 
         if (updatedFilters[attrName].length === 0) {
           delete updatedFilters[attrName];
@@ -77,7 +72,7 @@ export default function SubCategoryPage() {
       return {
         ...prev,
         category: slug, // ყოველთვის მიმდინარე slug
-        filters: updatedFilters,
+        filters: updatedFilters
       };
     });
   };
@@ -88,34 +83,31 @@ export default function SubCategoryPage() {
       const requestBody = {
         ...activeFilters,
         category: slug, // უზრუნველყოფს, რომ სწორი კატეგორია გაიგზავნოს
-        lang: i18n.language.split("-")[0],
+        lang: i18n.language.split('-')[0]
       };
 
-      const response = await fetch(
-        "http://localhost:5001/api/products/filter",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
+      const response = await fetch('http://localhost:5001/api/products/filter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-      );
+        body: JSON.stringify(requestBody)
+      });
 
       if (!response.ok) {
-        throw new Error("პროდუქტების წამოღება ვერ მოხერხდა");
+        throw new Error('პროდუქტების წამოღება ვერ მოხერხდა');
       }
 
       const resultProducts = await response.json();
-      console.log("ბექიდან მოვიდა:", resultProducts);
+      console.log('ბექიდან მოვიდა:', resultProducts);
       // ✅ სწორი სთეითის განახლება!
       setFilteredProducts(resultProducts);
     } catch (error) {
-      console.error("შეცდომა ფილტრაციისას:", error);
+      console.error('შეცდომა ფილტრაციისას:', error);
     }
   };
 
-  console.log(filteredProducts, "filteredProducts");
+  console.log(filteredProducts, 'filteredProducts');
 
   // ავტომატური გაშვება, როდესაც activeFilters ან ენა შეიცვლება
   useEffect(() => {
@@ -129,41 +121,38 @@ export default function SubCategoryPage() {
   };
 
   useEffect(() => {
-    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener('resize', handleWindowResize);
     return () => {
-      window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener('resize', handleWindowResize);
     };
   }, []);
 
   const handleSeeMore = () => {
-    setVisibleCount((prevCount) => prevCount + ITEMS_PER_GROUP);
+    setVisibleCount(prevCount => prevCount + ITEMS_PER_GROUP);
   };
 
-  const toggleDropDown = (index) => {
-    setOpenDropDowns((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
-    );
+  const toggleDropDown = index => {
+    setOpenDropDowns(prev => (prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]));
   };
 
-  const handleSelectSort = (type) => {
+  const handleSelectSort = type => {
     setSearchParams({ sort: type });
     setSortOptions(false);
   };
 
-  const handlePriceChange = (newRange) => {
+  const handlePriceChange = newRange => {
     setPriceRange(newRange);
   };
 
   const sortTypes = [
-    { id: "all", label: t("sort.title") },
-    { id: "priceAsc", label: t("sort.priceIncrease") },
-    { id: "priceDesc", label: t("sort.priceDecrese") },
-    { id: "nameAsc", label: t("sort.name") },
-    { id: "nameDesc", label: t("sort.nameReverse") },
+    { id: 'all', label: t('sort.title') },
+    { id: 'priceAsc', label: t('sort.priceIncrease') },
+    { id: 'priceDesc', label: t('sort.priceDecrese') },
+    { id: 'nameAsc', label: t('sort.name') },
+    { id: 'nameDesc', label: t('sort.nameReverse') }
   ];
-  const sortType = searchParams.get("sort") || "all";
-  const selectedOption =
-    sortTypes.find((option) => option.id === sortType) || sortTypes[0];
+  const sortType = searchParams.get('sort') || 'all';
+  const selectedOption = sortTypes.find(option => option.id === sortType) || sortTypes[0];
 
   // slug-ის შეცვლისას ძველი მონაცემების გასუფთავება
   useEffect(() => {
@@ -178,102 +167,91 @@ export default function SubCategoryPage() {
     let ignore = false;
     if (slug) {
       fetchSubCategories(slug, i18n.language)
-        .then((data) => {
+        .then(data => {
           if (!ignore) setSubCategories(data);
         })
-        .catch((err) => console.error(err));
+        .catch(err => console.error(err));
     }
     return () => {
       ignore = true;
     };
   }, [slug, i18n.language]);
 
-  console.log(subCategories, "subCategories");
+  console.log(subCategories, 'subCategories');
 
   // Fetch screenAttributes data (ფილტრების ჩექბოქსები)
   useEffect(() => {
     let ignore = false;
     if (slug) {
       fetchSubCateogryScreenAttributes(slug, i18n.language)
-        .then((data) => {
+        .then(data => {
           if (!ignore) setScreenAttributes(data);
         })
-        .catch((err) => console.error(err));
+        .catch(err => console.error(err));
     }
     return () => {
       ignore = true;
     };
   }, [slug, i18n.language]);
 
-  console.log(screenAttributes, "screenAttributes");
+  console.log(screenAttributes, 'screenAttributes');
 
   // Click Outside logic
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (sortRef.current && !sortRef.current.contains(event.target)) {
         setSortOptions(false);
       }
-      if (
-        mobileSortRef.current &&
-        !mobileSortRef.current.contains(event.target)
-      ) {
+      if (mobileSortRef.current && !mobileSortRef.current.contains(event.target)) {
         setSortOptions(false);
       }
-      if (
-        mobileFilterRef.current &&
-        !mobileFilterRef.current.contains(event.target)
-      ) {
+      if (mobileFilterRef.current && !mobileFilterRef.current.contains(event.target)) {
         setMobileFilterOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   // Disable body scroll when mobile filter is open
   useEffect(() => {
     if (mobileFilterOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [mobileFilterOpen]);
 
   const formattedFilters = useMemo(() => {
     if (!screenAttributes || !screenAttributes.filters) return [];
 
-    return Object.entries(screenAttributes.filters).map(
-      ([attrName, options]) => {
-        return {
-          attribute_name: attrName,
-          options: options || [],
-        };
-      },
-    );
+    return Object.entries(screenAttributes.filters).map(([attrName, options]) => {
+      return {
+        attribute_name: attrName,
+        options: options || []
+      };
+    });
   }, [screenAttributes]);
 
-  const getEffectivePrice = (product) => {
+  const getEffectivePrice = product => {
     const p = Number(product.price) || 0;
     const dp = Number(product.discount_price || product.discountPrice) || 0;
     return dp > 0 && dp < p ? dp : p;
   };
 
-  // 5. სორტირება და ფასის ფილტრაცია (იყენებს ბექენდიდან წამოღებულ filteredProducts-ს, თუ ის არსებობს)
   const sortedProducts = useMemo(() => {
-    // თუ ბექენდიდან უკვე მოვიდა გაფილტრული პროდუქტები, ვიყენებთ იმას, თუ არა - საწყის subCategories-ს
-    const targetProducts =
-      filteredProducts !== null ? filteredProducts : subCategories;
+    const targetProducts = filteredProducts !== null ? filteredProducts : subCategories;
 
     if (!targetProducts) return [];
 
-    let filtered = [...targetProducts].filter((product) => {
+    let filtered = [...targetProducts].filter(product => {
       const price = getEffectivePrice(product);
       return price >= priceRange[0] && price <= priceRange[1];
     });
@@ -282,21 +260,23 @@ export default function SubCategoryPage() {
       const priceA = getEffectivePrice(a);
       const priceB = getEffectivePrice(b);
 
-      if (sortType === "priceAsc") {
+      if (sortType === 'priceAsc') {
         return priceA - priceB;
       }
-      if (sortType === "priceDesc") {
+      if (sortType === 'priceDesc') {
         return priceB - priceA;
       }
-      if (sortType === "nameAsc") {
-        return (a.name || "").localeCompare(b.name || "");
+      if (sortType === 'nameAsc') {
+        return (a.name || '').localeCompare(b.name || '');
       }
-      if (sortType === "nameDesc") {
-        return (b.name || "").localeCompare(a.name || "");
+      if (sortType === 'nameDesc') {
+        return (b.name || '').localeCompare(a.name || '');
       }
       return 0;
     });
   }, [filteredProducts, subCategories, sortType, priceRange]);
+
+  console.log(sortedProducts, 'sortedProducts');
 
   const handleToggleMobileFilter = () => {
     setMobileFilterOpen(!mobileFilterOpen);
@@ -312,23 +292,21 @@ export default function SubCategoryPage() {
           </div>
           <div className={styles.filterGridDropDown}>
             {screenAttributes?.filters &&
-              Object.entries(screenAttributes.filters).map(
-                ([attributeName, options], index) => {
-                  const isOpen = openDropDowns.includes(index);
-                  return (
-                    <FilterDropdown
-                      key={attributeName || index}
-                      attributeName={attributeName}
-                      options={options}
-                      activeFilters={activeFilters}
-                      index={index}
-                      isOpen={isOpen}
-                      onToggle={toggleDropDown}
-                      onFilterChange={handleFilterChange}
-                    />
-                  );
-                },
-              )}
+              Object.entries(screenAttributes.filters).map(([attributeName, options], index) => {
+                const isOpen = openDropDowns.includes(index);
+                return (
+                  <FilterDropdown
+                    key={attributeName || index}
+                    attributeName={attributeName}
+                    options={options}
+                    activeFilters={activeFilters}
+                    index={index}
+                    isOpen={isOpen}
+                    onToggle={toggleDropDown}
+                    onFilterChange={handleFilterChange}
+                  />
+                );
+              })}
           </div>
         </div>
 
@@ -358,14 +336,9 @@ export default function SubCategoryPage() {
         />
 
         <div className={styles.productsGrid}>
-          <Breadcrumb
-            parentCategor={subCategories[0]?.parentCategor}
-            subCategory={subCategories[0]?.subCategory}
-          />
+          <Breadcrumb parentCategor={subCategories[0]?.parentCategor} subCategory={subCategories[0]?.subCategory} />
           <div className={styles.subCategoryHeader}>
-            <h1 className={styles.subCategoryTitle}>
-              {subCategories[0]?.subCategory}
-            </h1>
+            <h1 className={styles.subCategoryTitle}>{subCategories[0]?.subCategory}</h1>
 
             {windowWidth >= 712 && (
               <SortDropdown
@@ -384,11 +357,7 @@ export default function SubCategoryPage() {
             <div className={styles.outerDiv}>
               <div className={styles.sliderDiv}>
                 {sortedProducts.slice(0, visibleCount).map((product, index) => (
-                  <ProductCard
-                    key={product.id || index}
-                    product={product}
-                    t={t}
-                  />
+                  <ProductCard key={product.id || index} product={product} t={t} />
                 ))}
               </div>
 
