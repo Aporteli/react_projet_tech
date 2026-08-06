@@ -10,11 +10,11 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); // 1. დაემატა ერორის state
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSearch = async query => {
     setSearchQuery(query);
-    setErrorMessage(''); // ძებნისას წაშალოს ძველი ერორი
+    setErrorMessage('');
 
     if (query.length < 2) {
       setSearchResults([]);
@@ -31,16 +31,16 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
 
       const data = await response.json();
 
-      // 2. სწორი შემოწმება (response.ok)
+      console.log(data, 'data');
+
       if (!response.ok) {
-        // აქ მოდის: "Category parameter is required."
         throw new Error(data.message || 'Error occurred');
       }
 
       setSearchResults(data);
     } catch (error) {
       console.error('Search error:', error.message);
-      setErrorMessage(error.message); // 3. შეინახეთ მესიჯი state-ში
+      setErrorMessage(error.message);
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -72,34 +72,45 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
           {isLoading ? (
             <div className={styles.loading}>Loading...</div>
           ) : errorMessage ? (
-            // 4. ერორის გამოჩენა UI-ში
             <div className={styles.errorMessage} style={{ color: 'red', padding: '10px' }}>
               {errorMessage}
             </div>
           ) : searchResults.length > 0 ? (
             <div className={styles.resultsList}>
-              {searchResults.map(product => (
-                <div
-                  key={product.id}
-                  className={styles.resultItem}
-                  onClick={() => {
-                    onProductSelect(product);
-                    onClose();
-                    setSearchQuery('');
-                    setSearchResults([]);
-                    setErrorMessage('');
-                  }}>
-                  <img src={`${BASE_URL}/uploads/${product.image}`} alt={product.name} className={styles.resultImage} />
-                  <div className={styles.resultInfo}>
-                    <h4 className={styles.resultName}>{product.name}</h4>
-                    <p className={styles.resultPrice}>
-                      {product.discount_price && Number(product.discount_price) < Number(product.price)
-                        ? `${product.discount_price} ₾`
-                        : `${product.price} ₾`}
-                    </p>
+              {searchResults.map((product, index) => {
+                const productId = product.product_id || product.id;
+                const productName = product.product_name || product.name;
+                const productImage = product.image;
+
+                return (
+                  <div
+                    key={productId ? `prod-${productId}` : `item-${index}`}
+                    className={styles.resultItem}
+                    onClick={() => {
+                      onProductSelect(product);
+                      onClose();
+                      setSearchQuery('');
+                      setSearchResults([]);
+                      setErrorMessage('');
+                    }}>
+                    <img
+                      src={`${BASE_URL}/uploads/${productImage}`}
+                      alt={productName}
+                      className={styles.resultImage}
+                    />
+                    <div className={styles.resultInfo}>
+                      {/* 🟢 შეცვლილია: product.name-ის ნაცვლად გამოიყენება productName */}
+                      <h4 className={styles.resultName}>{productName}</h4>
+                      <p className={styles.resultPrice}>
+                        {product.discount_price &&
+                        Number(product.discount_price) < Number(product.price)
+                          ? `${product.discount_price} ₾`
+                          : `${product.price} ₾`}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : searchQuery.length >= 2 ? (
             <div className={styles.noResults}>{t('compare.noResults') || 'No products found'}</div>

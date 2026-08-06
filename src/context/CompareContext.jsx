@@ -18,6 +18,8 @@ export const CompareProvider = ({ children }) => {
   });
   const { isAuthenticated } = useAuth();
 
+  console.log(compareItems, 'compareItems');
+
   // Load compare from localStorage on initial mount (only if authenticated)
   useEffect(() => {
     if (isAuthenticated) {
@@ -45,13 +47,18 @@ export const CompareProvider = ({ children }) => {
 
   const addToCompare = product => {
     setCompareItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+      // Handle both id and product_id from API responses
+      const productId = product.product_id || product.id;
+      const existingItem = prevItems.find(
+        item => item.id === productId || item.product_id === productId
+      );
+
       if (existingItem) {
         return prevItems;
       }
 
       // Limit to max 4 products
-      if (prevItems.length >= 4 && product.category_id === prevItems[0].category_id) {
+      if (prevItems.length >= 4) {
         return prevItems;
       }
 
@@ -61,12 +68,18 @@ export const CompareProvider = ({ children }) => {
         const newProductCategory = product.category_id;
 
         if (firstItemCategory !== newProductCategory) {
-          // Clear existing items and add the new product from different category
-          return [{ ...product }];
+          // Don't allow adding products from different categories
+          return prevItems;
         }
       }
 
-      return [...prevItems, { ...product }];
+      // Normalize product object to ensure it has id field
+      const normalizedProduct = {
+        ...product,
+        id: productId
+      };
+
+      return [...prevItems, normalizedProduct];
     });
   };
 

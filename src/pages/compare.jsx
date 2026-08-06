@@ -19,7 +19,6 @@ export default function Compare() {
   // Fetch attributes based on category
   useEffect(() => {
     const category = getCompareCategory();
-
     if (category) {
       fetchSubCateogryCompareScreenAttributes(category, i18n.language.split('-')[0])
         .then(data => {
@@ -79,8 +78,8 @@ export default function Compare() {
                       {t('compare.product') || 'Product'}
                     </span>
                   </td>
-                  {compareItems.map(product => (
-                    <td key={product.id} className={styles.productCell}>
+                  {compareItems.map((product, index) => (
+                    <td key={`empty_1${index}`} className={styles.productCell}>
                       <div className={styles.productImageContainer}>
                         <button
                           className={styles.removeProductButton}
@@ -98,7 +97,7 @@ export default function Compare() {
                   ))}
                   {/* Fill empty cells to maintain 4 columns max */}
                   {Array.from({ length: 4 - compareItems.length }).map((_, index) => (
-                    <td key={`empty-${index}`} className={styles.emptyCell}>
+                    <td key={`empty-price-12${index}`} className={styles.emptyCell}>
                       <button
                         className={styles.addMoreButton}
                         onClick={() => setIsSearchModalOpen(true)}>
@@ -113,8 +112,8 @@ export default function Compare() {
                   <td className={styles.attributeCell}>
                     <span className={styles.attributeLabel}>{t('compare.price') || 'Price'}</span>
                   </td>
-                  {compareItems.map(product => (
-                    <td key={product.id} className={styles.productCell}>
+                  {compareItems.map((product, index) => (
+                    <td key={`price-${index}`} className={styles.productCell}>
                       <div className={styles.productPrice}>
                         {product.discount_price &&
                         Number(product.discount_price) < Number(product.price) ? (
@@ -134,27 +133,35 @@ export default function Compare() {
                 </tr>
 
                 {/* Dynamic attributes rows */}
-                {attributes?.filters &&
-                  Object.entries(attributes.filters).map(([attributeName, options]) => (
-                    <tr key={attributeName} className={styles.dataRow}>
+                {attributes?.attributes &&
+                  attributes.attributes.map((attribute, attrIndex) => (
+                    <tr key={`attr-row-${attribute}-${attrIndex}`} className={styles.dataRow}>
                       <td className={styles.attributeCell}>
-                        <span className={styles.attributeLabel}>{attributeName}</span>
+                        <span className={styles.attributeLabel}>{attribute}</span>
                       </td>
-                      {compareItems.map(product => {
-                        const productAttributeValue = product[attributeName] || '-';
+
+                      {/* 🟢 თითოეული შედარებული პროდუქტისთვის ვებუტებთ 1 ცალ <td>-ს */}
+                      {compareItems.map((product, prodIndex) => {
+                        // ვპოულობთ ამ პროდუქტის ატრიბუტებში იმას, რომლის სახელიც ემთხვევა მიმდინარე ატრიბუტს
+                        const matchedAttr = product.attributes?.find(
+                          item => item.attribute_name === attribute
+                        );
+
                         return (
-                          <td key={product.id} className={styles.productCell}>
+                          <td
+                            key={`cell-${product.product_id || product.id}-${attrIndex}-${prodIndex}`}
+                            className={styles.productCell}>
                             <span className={styles.attributeValue}>
-                              {Array.isArray(productAttributeValue)
-                                ? productAttributeValue.join(', ')
-                                : String(productAttributeValue)}
+                              {matchedAttr ? matchedAttr.attribute_value : '-'}
                             </span>
                           </td>
                         );
                       })}
-                      {Array.from({ length: 4 - compareItems.length }).map((_, index) => (
+
+                      {/* ცარიელი უჯრები შევსებისთვის */}
+                      {Array.from({ length: 4 - compareItems.length }).map((_, emptyIndex) => (
                         <td
-                          key={`empty-${attributeName}-${index}`}
+                          key={`empty-${attribute}-${emptyIndex}`}
                           className={styles.emptyCell}></td>
                       ))}
                     </tr>

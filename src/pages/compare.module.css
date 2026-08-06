@@ -113,11 +113,13 @@
 
 .attributeLabel {
   font-size: 16px;
+
   color: #1a1a1a;
   text-transform: capitalize;
 }
 
 .productCell {
+  /* border:2px solid red; */
   padding: 20px;
   min-width: 200px;
   vertical-align: top;
