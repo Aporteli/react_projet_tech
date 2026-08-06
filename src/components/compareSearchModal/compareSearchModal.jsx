@@ -10,9 +10,11 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // 1. დაემატა ერორის state
 
   const handleSearch = async query => {
     setSearchQuery(query);
+    setErrorMessage(''); // ძებნისას წაშალოს ძველი ერორი
 
     if (query.length < 2) {
       setSearchResults([]);
@@ -26,12 +28,19 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
       const response = await fetch(
         `${BASE_URL}/api/compare/search?q=${encodeURIComponent(query)}&lang=${i18n.language.split('-')[0]}${categoryParam}`
       );
+
       const data = await response.json();
-      if (response.ok) {
-        setSearchResults(data);
+
+      // 2. სწორი შემოწმება (response.ok)
+      if (!response.ok) {
+        // აქ მოდის: "Category parameter is required."
+        throw new Error(data.message || 'Error occurred');
       }
+
+      setSearchResults(data);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Search error:', error.message);
+      setErrorMessage(error.message); // 3. შეინახეთ მესიჯი state-ში
       setSearchResults([]);
     } finally {
       setIsLoading(false);
@@ -62,6 +71,11 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
         <div className={styles.resultsContainer}>
           {isLoading ? (
             <div className={styles.loading}>Loading...</div>
+          ) : errorMessage ? (
+            // 4. ერორის გამოჩენა UI-ში
+            <div className={styles.errorMessage} style={{ color: 'red', padding: '10px' }}>
+              {errorMessage}
+            </div>
           ) : searchResults.length > 0 ? (
             <div className={styles.resultsList}>
               {searchResults.map(product => (
@@ -73,6 +87,7 @@ export default function CompareSearchModal({ isOpen, onClose, onProductSelect, c
                     onClose();
                     setSearchQuery('');
                     setSearchResults([]);
+                    setErrorMessage('');
                   }}>
                   <img src={`${BASE_URL}/uploads/${product.image}`} alt={product.name} className={styles.resultImage} />
                   <div className={styles.resultInfo}>

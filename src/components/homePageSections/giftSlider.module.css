@@ -258,18 +258,6 @@
   color: white;
 }
 
-.compareBtnDisabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.compareBtnDisabled:hover {
-  background: var(--color-white);
-  border-color: #e0e0e0;
-  color: #665;
-  transform: none;
-}
-
 .heartBtn {
   height: 35px;
   width: 35px;

@@ -236,7 +236,7 @@ export default function GiftSlider({ images }) {
                     {discount && <span className={styles.discountBadge}>-{discount}%</span>}
                     <div className={styles.buttonsContainer}>
                       <button
-                        className={`${styles.compareBtn} ${isInCompare(index) ? styles.compareBtnActive : ''} ${!canCompare ? styles.compareBtnDisabled : ''}`}
+                        className={`${styles.compareBtn} ${isInCompare(index) ? styles.compareBtnActive : ''}`}
                         onClick={e =>
                           handleCompareToggle({ id: index, name, url, route, price, oldPrice, discount }, e)
                         }

@@ -51,7 +51,7 @@ export const CompareProvider = ({ children }) => {
       }
 
       // Limit to max 4 products
-      if (prevItems.length >= 4) {
+      if (prevItems.length >= 4 && product.category_id === prevItems[0].category_id) {
         return prevItems;
       }
 

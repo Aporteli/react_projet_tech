@@ -12,15 +12,11 @@ const BASE_URL = 'http://localhost:5001';
 export default function ProductCard({ product, t }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const { toggleCompare, isInCompare, getCompareCategory } = useCompare();
+  const { toggleCompare, isInCompare } = useCompare();
   const currentP =
     Number(product.discount_price) && Number(product.discount_price) < Number(product.price)
       ? Number(product.discount_price)
       : Number(product.price);
-
-  const productCategory = product.category_id;
-  const compareCategory = getCompareCategory();
-  const canCompare = !compareCategory || compareCategory === productCategory;
 
   const handleAddToCart = e => {
     e.preventDefault();
@@ -34,9 +30,7 @@ export default function ProductCard({ product, t }) {
 
   const handleCompareToggle = e => {
     e.preventDefault();
-    if (canCompare) {
-      toggleCompare(product);
-    }
+    toggleCompare(product);
   };
 
   console.log(product.price, product.discount_price);
@@ -46,10 +40,8 @@ export default function ProductCard({ product, t }) {
         <div className={styles.cardImageContainer}>
           <div className={styles.buttonsContainer}>
             <button
-              className={`${styles.compareBtn} ${isInCompare(product.id) ? styles.compareBtnActive : ''} ${!canCompare ? styles.compareBtnDisabled : ''}`}
-              onClick={handleCompareToggle}
-              disabled={!canCompare}
-              title={!canCompare ? 'Cannot compare products from different categories' : ''}>
+              className={`${styles.compareBtn} ${isInCompare(product.id) ? styles.compareBtnActive : ''}`}
+              onClick={handleCompareToggle}>
               <RefreshCw size={18} />
             </button>
             <button className={styles.heartBtn} onClick={handleWishlistToggle}>

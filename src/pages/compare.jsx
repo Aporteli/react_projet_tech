@@ -4,13 +4,14 @@ import { useCompare } from '../context/CompareContext';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import CompareSearchModal from '../components/compareSearchModal/compareSearchModal';
-import { fetchSubCateogryScreenAttributes } from '../api/categoryService';
+import { fetchSubCateogryCompareScreenAttributes } from '../api/categoryService';
 
 const BASE_URL = 'http://localhost:5001';
 
 export default function Compare() {
   const { t } = useTranslation();
-  const { compareItems, removeFromCompare, clearCompare, toggleCompare, getCompareCategory } = useCompare();
+  const { compareItems, removeFromCompare, clearCompare, toggleCompare, getCompareCategory } =
+    useCompare();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [attributes, setAttributes] = useState(null);
   const { i18n } = useTranslation();
@@ -18,14 +19,17 @@ export default function Compare() {
   // Fetch attributes based on category
   useEffect(() => {
     const category = getCompareCategory();
+
     if (category) {
-      fetchSubCateogryScreenAttributes(category, i18n.language.split('-')[0])
+      fetchSubCateogryCompareScreenAttributes(category, i18n.language.split('-')[0])
         .then(data => {
           setAttributes(data);
         })
         .catch(err => console.error(err));
     }
   }, [getCompareCategory, i18n.language]);
+
+  console.log(attributes, 'attributes');
 
   const handleAddProduct = product => {
     toggleCompare(product);
@@ -46,7 +50,13 @@ export default function Compare() {
         {compareItems.length === 0 ? (
           <div className={styles.emptyCompare}>
             <div className={styles.emptyIcon}>
-              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+              <svg
+                width="120"
+                height="120"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1">
                 <path d="M9 17h6" />
                 <path d="M9 13h6" />
                 <path d="M9 9h6" />
@@ -65,12 +75,16 @@ export default function Compare() {
                 {/* Product images row */}
                 <tr className={styles.imageRow}>
                   <td className={styles.attributeCell}>
-                    <span className={styles.attributeLabel}>{t('compare.product') || 'Product'}</span>
+                    <span className={styles.attributeLabel}>
+                      {t('compare.product') || 'Product'}
+                    </span>
                   </td>
                   {compareItems.map(product => (
                     <td key={product.id} className={styles.productCell}>
                       <div className={styles.productImageContainer}>
-                        <button className={styles.removeProductButton} onClick={() => removeFromCompare(product.id)}>
+                        <button
+                          className={styles.removeProductButton}
+                          onClick={() => removeFromCompare(product.id)}>
                           ×
                         </button>
                         <img
@@ -85,7 +99,9 @@ export default function Compare() {
                   {/* Fill empty cells to maintain 4 columns max */}
                   {Array.from({ length: 4 - compareItems.length }).map((_, index) => (
                     <td key={`empty-${index}`} className={styles.emptyCell}>
-                      <button className={styles.addMoreButton} onClick={() => setIsSearchModalOpen(true)}>
+                      <button
+                        className={styles.addMoreButton}
+                        onClick={() => setIsSearchModalOpen(true)}>
                         +
                       </button>
                     </td>
@@ -100,7 +116,8 @@ export default function Compare() {
                   {compareItems.map(product => (
                     <td key={product.id} className={styles.productCell}>
                       <div className={styles.productPrice}>
-                        {product.discount_price && Number(product.discount_price) < Number(product.price) ? (
+                        {product.discount_price &&
+                        Number(product.discount_price) < Number(product.price) ? (
                           <>
                             <span className={styles.currentPrice}>{product.discount_price} ₾</span>
                             <span className={styles.oldPrice}>{product.price} ₾</span>
@@ -136,7 +153,9 @@ export default function Compare() {
                         );
                       })}
                       {Array.from({ length: 4 - compareItems.length }).map((_, index) => (
-                        <td key={`empty-${attributeName}-${index}`} className={styles.emptyCell}></td>
+                        <td
+                          key={`empty-${attributeName}-${index}`}
+                          className={styles.emptyCell}></td>
                       ))}
                     </tr>
                   ))}
