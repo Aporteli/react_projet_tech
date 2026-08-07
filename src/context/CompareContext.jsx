@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const CompareContext = createContext();
+const BASE_URL = 'http://localhost:5001';
 
 export const useCompare = () => {
   const context = useContext(CompareContext);
@@ -17,6 +19,7 @@ export const CompareProvider = ({ children }) => {
     return savedCompare ? JSON.parse(savedCompare) : [];
   });
   const { isAuthenticated } = useAuth();
+  const { i18n } = useTranslation();
 
   console.log(compareItems, 'compareItems');
 
@@ -44,6 +47,35 @@ export const CompareProvider = ({ children }) => {
       localStorage.setItem('compare', JSON.stringify(compareItems));
     }
   }, [compareItems, isAuthenticated]);
+
+  // Refetch products with new language when language changes
+  useEffect(() => {
+    const refetchProductsWithNewLanguage = async () => {
+      if (compareItems.length === 0) return;
+
+      const currentLang = i18n.language.split('-')[0];
+      const productIds = compareItems.map(item => item.id || item.product_id).filter(Boolean);
+
+      if (productIds.length === 0) return;
+
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/compare/products?ids=${productIds.join(',')}&lang=${currentLang}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          console.log(data, "განახლებული compareItems")
+          setCompareItems(data);
+        }
+      } catch (error) {
+        console.error('Error refetching products with new language:', error);
+      }
+    };
+
+    refetchProductsWithNewLanguage();
+  }, [i18n.language]);
 
   const addToCompare = product => {
     setCompareItems(prevItems => {
