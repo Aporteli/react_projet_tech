@@ -12,7 +12,9 @@ export const CompareTooltip = () => {
     <>
       <div className={styles.hiddenDiv}></div>
       <div className={styles.tooltip}>
-        <p className={styles.title}>{t('tooltip.compare.title')}</p>
+        <p className={compareCount > 0 ? styles.title : styles.titleDefault}>
+          {compareCount > 0 ? t('tooltip.compare.yourList') || 'Another Title' : t('tooltip.compare.title')}
+        </p>
         <p className={styles.description}>
           {compareCount > 0
             ? `${t('tooltip.compare.items') || 'Items'}: ${compareCount}`

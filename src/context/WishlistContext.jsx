@@ -28,20 +28,10 @@ export const WishlistProvider = ({ children }) => {
     }
   }, [isAuthenticated]);
 
-  // Clear wishlist when user logs out (after being initialized)
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setWishlistItems([]);
-      localStorage.removeItem('wishlist');
-    }
-  }, [isAuthenticated]);
-
   // Save wishlist to localStorage whenever it changes (only if authenticated)
   useEffect(() => {
-    if (isAuthenticated) {
-      localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
-    }
-  }, [wishlistItems, isAuthenticated]);
+    localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
 
   const addToWishlist = product => {
     setWishlistItems(prevItems => {

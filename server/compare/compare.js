@@ -16,9 +16,9 @@ router.get('/search', async (req, res) => {
 
     const sql = `
       SELECT 
-        p.id AS product_id,
-        p.name AS product_name,
-        p.slug AS product_slug,
+        p.id,
+        p.name,
+        p.slug,
         p.price,
         p.discount_price,
         p.image,
@@ -144,9 +144,9 @@ router.get('/products', async (req, res) => {
 
     const sql = `
       SELECT 
-        p.id AS product_id,
-        p.name AS product_name,
-        p.slug AS product_slug,
+        p.id,
+        p.name,
+        p.slug,
         p.price,
         p.discount_price,
         p.image,
@@ -195,5 +195,7 @@ router.get('/products', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 export default router;

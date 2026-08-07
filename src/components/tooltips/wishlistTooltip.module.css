@@ -51,6 +51,7 @@
 }
 
 .continueShoppingButton {
+  font-size: 16px;
   margin-top: 10px;
   padding: 10px 20px;
   background-color: rgb(115, 94, 168);

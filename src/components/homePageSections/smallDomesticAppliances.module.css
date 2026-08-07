@@ -1,5 +1,5 @@
 .container {
-  border: 2px solid red;
+  /* border: 2px solid red; */
   max-width: 1230px;
   margin: 70px auto 0;
 }
@@ -11,7 +11,7 @@
 }
 
 .mainDiv {
-  border: 2px solid blue;
+  /* border: 2px solid blue; */
   width: 100%;
   display: grid;
   /* 3 თანაბარი სვეტი */

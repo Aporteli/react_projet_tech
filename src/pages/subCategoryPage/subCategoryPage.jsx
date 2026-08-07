@@ -107,6 +107,7 @@ export default function SubCategoryPage() {
     }
   };
 
+  console.log(activeFilters, 'activeFilters');
   console.log(filteredProducts, 'filteredProducts');
 
   // ავტომატური გაშვება, როდესაც activeFilters ან ენა შეიცვლება
@@ -132,7 +133,9 @@ export default function SubCategoryPage() {
   };
 
   const toggleDropDown = index => {
-    setOpenDropDowns(prev => (prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]));
+    setOpenDropDowns(prev =>
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
   };
 
   const handleSelectSort = type => {
@@ -336,7 +339,10 @@ export default function SubCategoryPage() {
         />
 
         <div className={styles.productsGrid}>
-          <Breadcrumb parentCategor={subCategories[0]?.parentCategor} subCategory={subCategories[0]?.subCategory} />
+          <Breadcrumb
+            parentCategor={subCategories[0]?.parentCategor}
+            subCategory={subCategories[0]?.subCategory}
+          />
           <div className={styles.subCategoryHeader}>
             <h1 className={styles.subCategoryTitle}>{subCategories[0]?.subCategory}</h1>
 

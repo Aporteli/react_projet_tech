@@ -30,11 +30,19 @@
   /* animation: fadeIn 0.2s ease-in-out; */
 }
 
-.title {
+.titleDefault {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.title {
+  /* border: 2px solid red; */
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  align-self: flex-start;
 }
 
 .description {
@@ -51,6 +59,7 @@
 }
 
 .continueShoppingButton {
+  text-align: center;
   margin-top: 10px;
   padding: 10px 20px;
   background-color: rgb(115, 94, 168);

@@ -18,7 +18,8 @@
       "button": "Open shopping",
       "moreItems": "more items",
       "subtotal": "Subtotal",
-      "viewCart": "View Cart"
+      "viewCart": "View Cart",
+      "yourList": "Cart"
     },
     "wishlist": {
       "title": "Your wishlist is empty",
@@ -31,7 +32,8 @@
       "subtitle": "Add items in order to compare them",
       "button": "Open compare",
       "items": "Items",
-      "viewCompare": "View Compare"
+      "viewCompare": "View Compare",
+      "yourList": "Compare "
     },
     "subcategories": {
       "soon": "Will be available soon..."
@@ -62,9 +64,20 @@
     },
     "Computers & Accessories": {
       "Laptop": [],
-      "Laptop Accessories": ["Laptop Bag", "Laptop Charger", "Laptop Cooler", "Laptop Stand", "Laptop Stylus"],
+      "Laptop Accessories": [
+        "Laptop Bag",
+        "Laptop Charger",
+        "Laptop Cooler",
+        "Laptop Stand",
+        "Laptop Stylus"
+      ],
       "Tablet Computer": [],
-      "Tab Accessories": ["Tab Protective Case", "Tab Screen Protector", "Tab Sylus", "Tab Keyboard"],
+      "Tab Accessories": [
+        "Tab Protective Case",
+        "Tab Screen Protector",
+        "Tab Sylus",
+        "Tab Keyboard"
+      ],
       "All-in-One Computer": [],
       "Desktop Computer": [],
       "Monitor": [],
@@ -96,7 +109,12 @@
         "Batteries & Battery Chargers",
         "Screen Cleaners"
       ],
-      "UPS Systems": ["Surge Protection & Adapter", "UPS Systems", "UPS Accessories", "Portable Powerstation"]
+      "UPS Systems": [
+        "Surge Protection & Adapter",
+        "UPS Systems",
+        "UPS Accessories",
+        "Portable Powerstation"
+      ]
     },
     "TV & Audio": {
       "TV": [],
@@ -140,7 +158,12 @@
     },
     "Photo & Video": {
       "Digital Camera": [],
-      "Digital Camera Accessories": ["Camera Lens", "Camera Bag", "Camera Memory Card", "Camera Battery"],
+      "Digital Camera Accessories": [
+        "Camera Lens",
+        "Camera Bag",
+        "Camera Memory Card",
+        "Camera Battery"
+      ],
       "Video Camera": [],
       "Action Camera": [],
       "Drone": ["Drone Accessories"],

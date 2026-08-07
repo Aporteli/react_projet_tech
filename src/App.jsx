@@ -11,6 +11,7 @@ import Wishlist from './pages/wishlist';
 import Compare from './pages/compare';
 import SearchResults from './pages/searchResults/searchResults';
 import User from './pages/user/User';
+import SingleProduct from './pages/singleProduct/singleProduct';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -36,9 +37,14 @@ function App() {
                     <Route path="/compare" element={<Compare />} />
                     <Route path="/search" element={<SearchResults />} />
                     <Route path="/user" element={<User />} />
+                    <Route path="/product/:id" element={<SingleProduct />} />
                     <Route
                       path="*"
-                      element={<div style={{ padding: '50px', textAlign: 'center' }}>გვერდი ვერ მოიძებნა! ❌</div>}
+                      element={
+                        <div style={{ padding: '50px', textAlign: 'center' }}>
+                          გვერდი ვერ მოიძებნა! ❌
+                        </div>
+                      }
                     />
                   </Route>
                 </Routes>

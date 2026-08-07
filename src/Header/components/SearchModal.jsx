@@ -65,7 +65,7 @@ export default function SearchModal({
                 <div className={styles.searchResultItem}>
                   <Link
                     key={product.id}
-                    to={`/product/${product.slug}`}
+                    to={`/product/${product.id}`}
                     className={styles.searchResultItemLink}
                     onClick={closeModal}
                   >

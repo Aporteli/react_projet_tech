@@ -33,20 +33,10 @@ export const CompareProvider = ({ children }) => {
     }
   }, [isAuthenticated]);
 
-  // Clear compare when user logs out (after being initialized)
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setCompareItems([]);
-      localStorage.removeItem('compare');
-    }
-  }, [isAuthenticated]);
-
   // Save compare to localStorage whenever it changes (only if authenticated)
   useEffect(() => {
-    if (isAuthenticated) {
-      localStorage.setItem('compare', JSON.stringify(compareItems));
-    }
-  }, [compareItems, isAuthenticated]);
+    localStorage.setItem('compare', JSON.stringify(compareItems));
+  }, [compareItems]);
 
   // Refetch products with new language when language changes
   useEffect(() => {
@@ -77,38 +67,55 @@ export const CompareProvider = ({ children }) => {
     refetchProductsWithNewLanguage();
   }, [i18n.language]);
 
-  const addToCompare = product => {
+  // ბექენდიდან კონკრეტული პროდუქტის წამოღების დამხმარე ფუნქცია
+  const fetchProductDetails = async productId => {
+    const currentLang = i18n.language.split('-')[0];
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/compare/products?ids=${productId}&lang=${currentLang}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return data[0]; // აბრუნებს წამოღებულ პროდუქტს
+      }
+    } catch (error) {
+      console.error('Error fetching product details:', error);
+    }
+    return null;
+  };
+
+  const addToCompare = async product => {
+    const productId = product.id || product.product_id;
+
+    // 1. თუ უკვე არის სიაში, არ დაამატოს
+    if (isInCompare(productId)) return;
+
+    // 2. თუ ლიმიტი (4 პროდუქტი) შევსებულია, არ დაამატოს
+    if (compareItems.length >= 4) return;
+
+    // 3. წამოიღოს განახლებული პროდუქტი ბექენდიდან მიმდინარე ენით
+    const fetchedProduct = await fetchProductDetails(productId);
+    const newProduct = fetchedProduct || product;
+
     setCompareItems(prevItems => {
-      // Handle both id and product_id from API responses
-      const existingItem = prevItems.find(item => String(item.id) === String(product.id));
-
-      if (existingItem) {
-        return prevItems;
-      }
-
-      // Limit to max 4 products
-      if (prevItems.length >= 4) {
-        return prevItems;
-      }
-
       // Check if there are existing items and if the new product is from a different category
       if (prevItems.length > 0) {
         const firstItemCategory = prevItems[0].category_id;
-        const newProductCategory = product.category_id;
+        const newProductCategory = newProduct.category_id;
 
         if (
           firstItemCategory &&
           newProductCategory &&
           String(firstItemCategory) !== String(newProductCategory)
         ) {
-          return [{ ...product }];
+          return [{ ...newProduct }];
         }
       }
 
       // Normalize product object to ensure it has id field
       const normalizedProduct = {
-        ...product,
-        id: product.id
+        ...newProduct,
+        id: newProduct.id || productId
       };
 
       return [...prevItems, normalizedProduct];
@@ -116,18 +123,22 @@ export const CompareProvider = ({ children }) => {
   };
 
   const removeFromCompare = productId => {
-    setCompareItems(prevItems => prevItems.filter(item => item.id !== productId));
+    setCompareItems(prevItems =>
+      prevItems.filter(item => (item.id || item.product_id) !== productId)
+    );
   };
 
   const isInCompare = productId => {
-    return compareItems.some(item => item.id === productId);
+    return compareItems.some(item => (item.id || item.product_id) === productId);
   };
 
-  const toggleCompare = product => {
-    if (isInCompare(product.id)) {
-      removeFromCompare(product.id);
+  const toggleCompare = async product => {
+    const productId = product.id || product.product_id;
+
+    if (isInCompare(productId)) {
+      removeFromCompare(productId);
     } else {
-      addToCompare(product);
+      await addToCompare(product);
     }
   };
 

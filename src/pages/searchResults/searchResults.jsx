@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import styles from './searchResults.module.css';
 import { useTranslation } from 'react-i18next';
 import HeartIconLight from '../../icons/heartIconLight';
@@ -8,12 +7,16 @@ import HeartIconFilled from '../../icons/heartIconFilled';
 import { ShoppingCart, RefreshCw } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCompare } from '../../context/CompareContext';
 
 function SearchResults() {
   const { t, i18n } = useTranslation();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { toggleCompare, isInCompare } = useCompare();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const query = searchParams.get('q') || '';
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,14 +50,30 @@ function SearchResults() {
     fetchSearchResults();
   }, [query, i18n.language]);
 
+  const handleCardClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   const handleAddToCart = (product, e) => {
-    e.preventDefault();
+    e.stopPropagation();
     addToCart(product);
   };
 
   const handleWishlistToggle = (product, e) => {
-    e.preventDefault();
+    e.stopPropagation();
     toggleWishlist(product);
+  };
+
+  const handleCompareToggle = (product, e) => {
+    e.stopPropagation();
+    if (product) {
+      toggleCompare(product);
+    }
+  };
+
+  const handleBuyNow = (productId, e) => {
+    e.stopPropagation();
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -99,39 +118,51 @@ function SearchResults() {
       {!loading && !error && products.length > 0 && (
         <div className={styles.productsGrid}>
           {products.map(product => (
-            <div key={product.id} className={styles.productCard}>
-              <Link to={`/product/${product.slug}`} className={styles.productCardLink}>
-                <div className={styles.productImageContainer}>
-                  <div className={styles.buttonsContainer}>
-                    <button className={styles.compareBtn} onClick={e => e.preventDefault()}>
-                      <RefreshCw size={18} />
-                    </button>
-                    <button className={styles.heartBtn} onClick={e => handleWishlistToggle(product, e)}>
-                      {isInWishlist(product.id) ? <HeartIconFilled /> : <HeartIconLight />}
-                    </button>
-                  </div>
-                  <img
-                    src={`http://localhost:5001/uploads/${product.image}`}
-                    alt={product.name}
-                    className={styles.productImage}
-                  />
+            <div
+              key={product.id}
+              className={styles.productCard}
+              onClick={() => handleCardClick(product.id)}
+              style={{ cursor: 'pointer' }}>
+              <div className={styles.productImageContainer}>
+                <div className={styles.buttonsContainer}>
+                  <button
+                    className={`${styles.compareBtn} ${isInCompare(product.id) ? styles.compareBtnActive : ''}`}
+                    onClick={e => handleCompareToggle(product, e)}>
+                    <RefreshCw size={18} />
+                  </button>
+                  <button
+                    className={styles.heartBtn}
+                    onClick={e => handleWishlistToggle(product, e)}>
+                    {isInWishlist(product.id) ? <HeartIconFilled /> : <HeartIconLight />}
+                  </button>
                 </div>
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  <p className={styles.productPrice}>
-                    {product.discount_price ? product.discount_price : product.price} ₾
-                  </p>
-                  {product.discount_price && <p className={styles.originalPrice}>{product.price} ₾</p>}
-                  <div className={styles.actionButtons}>
-                    <button className={styles.addToCartBtn} onClick={e => handleAddToCart(product, e)}>
-                      <ShoppingCart size={15} />
-                    </button>
-                    <button className={styles.buyNowBtn} onClick={e => e.preventDefault()}>
-                      {t('discountSlider.buyNow')}
-                    </button>
-                  </div>
+                <img
+                  src={`http://localhost:5001/uploads/${product.image}`}
+                  alt={product.name}
+                  className={styles.productImage}
+                />
+              </div>
+              <div className={styles.productInfo}>
+                <h3 className={styles.productName}>{product.name}</h3>
+                <p className={styles.productPrice}>
+                  {product.discount_price ? product.discount_price : product.price} ₾
+                </p>
+                {product.discount_price && (
+                  <p className={styles.originalPrice}>{product.price} ₾</p>
+                )}
+                <div className={styles.actionButtons}>
+                  <button
+                    className={styles.addToCartBtn}
+                    onClick={e => handleAddToCart(product, e)}>
+                    <ShoppingCart size={15} />
+                  </button>
+                  <button
+                    className={styles.buyNowBtn}
+                    onClick={e => handleBuyNow(product.id, e)}>
+                    {t('discountSlider.buyNow')}
+                  </button>
                 </div>
-              </Link>
+              </div>
             </div>
           ))}
         </div>
