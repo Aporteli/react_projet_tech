@@ -18,7 +18,7 @@ export async function handleRegister(formData) {
       throw new Error(data.message || 'დაფიქსირდა შეცდომა');
     }
 
-    return { success: true, message: data.message, data };
+    return { success: true, message: data.message, data, user: data.user };
   } catch (err) {
     return { success: false, error: err.message || 'დაფიქსირდა შეცდომა' };
   }

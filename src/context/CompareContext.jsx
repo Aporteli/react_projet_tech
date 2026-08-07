@@ -66,7 +66,7 @@ export const CompareProvider = ({ children }) => {
         if (response.ok) {
           const data = await response.json();
 
-          console.log(data, "განახლებული compareItems")
+          console.log(data, 'განახლებული compareItems');
           setCompareItems(data);
         }
       } catch (error) {
@@ -80,10 +80,7 @@ export const CompareProvider = ({ children }) => {
   const addToCompare = product => {
     setCompareItems(prevItems => {
       // Handle both id and product_id from API responses
-      const productId = product.product_id || product.id;
-      const existingItem = prevItems.find(
-        item => item.id === productId || item.product_id === productId
-      );
+      const existingItem = prevItems.find(item => String(item.id) === String(product.id));
 
       if (existingItem) {
         return prevItems;
@@ -99,16 +96,19 @@ export const CompareProvider = ({ children }) => {
         const firstItemCategory = prevItems[0].category_id;
         const newProductCategory = product.category_id;
 
-        if (firstItemCategory !== newProductCategory) {
-          // Don't allow adding products from different categories
-          return prevItems;
+        if (
+          firstItemCategory &&
+          newProductCategory &&
+          String(firstItemCategory) !== String(newProductCategory)
+        ) {
+          return [{ ...product }];
         }
       }
 
       // Normalize product object to ensure it has id field
       const normalizedProduct = {
         ...product,
-        id: productId
+        id: product.id
       };
 
       return [...prevItems, normalizedProduct];
