@@ -14,6 +14,7 @@ import User from './pages/user/User';
 import SingleProduct from './pages/singleProduct/singleProduct';
 import { useAppSync } from './hooks/useAppSync';
 import { useAuth } from './context/AuthContext';
+import CustomToastContainer from './components/ToastContainer';
 
 function App() {
   const { user } = useAuth();
@@ -45,6 +46,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <CustomToastContainer />
     </div>
   );
 }

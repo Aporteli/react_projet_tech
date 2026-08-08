@@ -7,10 +7,12 @@ import { useCompare } from '../../context/CompareContext';
 import HeartIconLight from '../../icons/heartIconLight';
 import HeartIconFilled from '../../icons/heartIconFilled';
 import styles from './singleProduct.module.css';
+import { useTranslation } from 'react-i18next';
 
 const BASE_URL = 'http://localhost:5001';
 
 export default function SingleProduct() {
+  const { i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -23,8 +25,11 @@ export default function SingleProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true);
-        const response = await fetch(`${BASE_URL}/api/products/${id}?lang=en`);
+        if (!product) {
+          setLoading(true);
+        }
+        const currentLang = i18n.language ? i18n.language.split('-')[0] : 'en';
+        const response = await fetch(`${BASE_URL}/api/products/${id}?lang=${currentLang}`);
         if (!response.ok) {
           throw new Error('Product not found');
         }
@@ -40,7 +45,7 @@ export default function SingleProduct() {
     if (id) {
       fetchProduct();
     }
-  }, [id]);
+  }, [id, i18n.language]);
 
   const handleAddToCart = () => {
     if (product) {

@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
 
+const BASE_URL = 'http://localhost:5001';
 const WishlistContext = createContext();
 
 export const useWishlist = () => {
@@ -12,55 +13,79 @@ export const useWishlist = () => {
 };
 
 export const WishlistProvider = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  const prevAuthRef = useRef(isAuthenticated);
+
   const [wishlistItems, setWishlistItems] = useState(() => {
     const savedWishlist = localStorage.getItem('wishlist');
     return savedWishlist ? JSON.parse(savedWishlist) : [];
   });
-  const { isAuthenticated } = useAuth();
 
-  // Load wishlist from localStorage on initial mount (only if authenticated)
+  // 1. Logout-ისას State-ის გასუფთავება
   useEffect(() => {
-    if (isAuthenticated) {
-      const storedWishlist = localStorage.getItem('wishlist');
-      if (storedWishlist) {
-        setWishlistItems(JSON.parse(storedWishlist));
-      }
+    if (prevAuthRef.current === true && isAuthenticated === false) {
+      setWishlistItems([]);
     }
+    prevAuthRef.current = isAuthenticated;
   }, [isAuthenticated]);
 
-  // Save wishlist to localStorage whenever it changes (only if authenticated)
+  // 2. LocalStorage-ის მართვა (მხოლოდ სტუმრებისთვის / ცარიელი მასივისას წაშლა)
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
-  }, [wishlistItems]);
-
-  const addToWishlist = product => {
-    setWishlistItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevItems;
+    if (isAuthenticated) {
+      if (wishlistItems.length > 0) {
+        localStorage.setItem('wishlist', JSON.stringify(wishlistItems));
+      } else {
+        localStorage.removeItem('wishlist');
       }
-      return [...prevItems, { ...product }];
+    }
+  }, [wishlistItems, isAuthenticated]);
+
+  const isInWishlist = productId => {
+    return wishlistItems.some(item => (item.id || item.product_id) === productId);
+  };
+
+  // 💖 Toggle (დამატება / წაშლა ბექენდზე და Local State-ში)
+  const toggleWishlist = async product => {
+    const productId = product.id || product.product_id;
+
+    // ა) თუ დალოგინებულია, ვაგზავნით ბექენდზე
+    if (isAuthenticated && user?.id) {
+      try {
+        await fetch(`${BASE_URL}/api/wishlist/toggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            productId: productId
+          })
+        });
+      } catch (error) {
+        console.error('Wishlist-ის შეცდომა:', error);
+      }
+    }
+
+    // ბ) ვანახლებთ Local State-ს
+    setWishlistItems(prevItems => {
+      const exists = prevItems.some(item => (item.id || item.product_id) === productId);
+      if (exists) {
+        return prevItems.filter(item => (item.id || item.product_id) !== productId);
+      }
+      return [...prevItems, product];
     });
   };
 
   const removeFromWishlist = productId => {
-    setWishlistItems(prevItems => prevItems.filter(item => item.id !== productId));
-  };
-
-  const isInWishlist = productId => {
-    return wishlistItems.some(item => item.id === productId);
-  };
-
-  const toggleWishlist = product => {
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
+    const item = wishlistItems.find(i => (i.id || i.product_id) === productId);
+    if (item) {
+      toggleWishlist(item);
     }
   };
 
   const clearWishlist = () => {
     setWishlistItems([]);
+    if (!isAuthenticated) {
+      localStorage.removeItem('wishlist');
+    }
   };
 
   const wishlistCount = wishlistItems.length;
@@ -68,12 +93,11 @@ export const WishlistProvider = ({ children }) => {
   return (
     <WishlistContext.Provider
       value={{
-        setWishlistItems,
         wishlistItems,
-        addToWishlist,
+        setWishlistItems, // 👈 `useAppSync`-ისთვის გატანილია
+        toggleWishlist,
         removeFromWishlist,
         isInWishlist,
-        toggleWishlist,
         clearWishlist,
         wishlistCount
       }}>

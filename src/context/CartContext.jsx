@@ -25,15 +25,18 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     if (prevAuthRef.current === true && isAuthenticated === false) {
       setCartItems([]);
-      localStorage.removeItem('cart');
     }
     prevAuthRef.current = isAuthenticated;
   }, [isAuthenticated]);
 
   // 2. ვინახავთ LocalStorage-ში მხოლოდ მაშინ, როცა მომხმარებელი სტუმარია
   useEffect(() => {
-    if (!isAuthenticated) {
-      localStorage.setItem('cart', JSON.stringify(cartItems));
+    if (isAuthenticated) {
+      if (cartItems.length > 0) {
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+      } else {
+        localStorage.removeItem('cart');
+      }
     }
   }, [cartItems, isAuthenticated]);
 

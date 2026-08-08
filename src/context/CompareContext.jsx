@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 const CompareContext = createContext();
 const BASE_URL = 'http://localhost:5001';
@@ -14,31 +15,36 @@ export const useCompare = () => {
 };
 
 export const CompareProvider = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  const { i18n } = useTranslation();
+  const prevAuthRef = useRef(isAuthenticated);
+
   const [compareItems, setCompareItems] = useState(() => {
     const savedCompare = localStorage.getItem('compare');
     return savedCompare ? JSON.parse(savedCompare) : [];
   });
-  const { isAuthenticated } = useAuth();
-  const { i18n } = useTranslation();
 
-  console.log(compareItems, 'compareItems');
-
-  // Load compare from localStorage on initial mount (only if authenticated)
+  // 1. Logout-ისას State-ისა და LocalStorage-ის გასუფთავება
   useEffect(() => {
-    if (isAuthenticated) {
-      const storedCompare = localStorage.getItem('compare');
-      if (storedCompare) {
-        setCompareItems(JSON.parse(storedCompare));
-      }
+    if (prevAuthRef.current === true && isAuthenticated === false) {
+      setCompareItems([]);
+      localStorage.removeItem('compare');
     }
+    prevAuthRef.current = isAuthenticated;
   }, [isAuthenticated]);
 
-  // Save compare to localStorage whenever it changes (only if authenticated)
+  // 2. LocalStorage-ის მართვა (მხოლოდ მაშინ, როცა სტუმარია!)
   useEffect(() => {
-    localStorage.setItem('compare', JSON.stringify(compareItems));
-  }, [compareItems]);
+    if (isAuthenticated) {
+      if (compareItems.length > 0) {
+        localStorage.setItem('compare', JSON.stringify(compareItems));
+      } else {
+        localStorage.removeItem('compare');
+      }
+    }
+  }, [compareItems, isAuthenticated]);
 
-  // Refetch products with new language when language changes
+  // 3. ენის შეცვლისას პროდუქტების ხელახლა წამოღება ახალი ენით
   useEffect(() => {
     const refetchProductsWithNewLanguage = async () => {
       if (compareItems.length === 0) return;
@@ -55,8 +61,6 @@ export const CompareProvider = ({ children }) => {
 
         if (response.ok) {
           const data = await response.json();
-
-          console.log(data, 'განახლებული compareItems');
           setCompareItems(data);
         }
       } catch (error) {
@@ -76,7 +80,7 @@ export const CompareProvider = ({ children }) => {
       );
       if (response.ok) {
         const data = await response.json();
-        return data[0]; // აბრუნებს წამოღებულ პროდუქტს
+        return data[0];
       }
     } catch (error) {
       console.error('Error fetching product details:', error);
@@ -84,42 +88,44 @@ export const CompareProvider = ({ children }) => {
     return null;
   };
 
+  // შედარებაში დამატება
   const addToCompare = async product => {
     const productId = product.id || product.product_id;
 
     // 1. თუ უკვე არის სიაში, არ დაამატოს
     if (isInCompare(productId)) return;
 
-    // 2. თუ ლიმიტი (4 პროდუქტი) შევსებულია, არ დაამატოს
-    if (compareItems.length >= 4) return;
+    // 2. 4 პროდუქტის ლიმიტის შემოწმება
+    if (compareItems.length >= 4) {
+      toast.error('შედარებაში მაქსიმუმ 4 პროდუქტის დამატებაა შესაძლებელი!');
+      return;
+    }
 
-    // 3. წამოიღოს განახლებული პროდუქტი ბექენდიდან მიმდინარე ენით
+    // 3. კატეგორიის შემოწმება (fetch-მდე)
+    if (compareItems.length > 0) {
+      const firstItemCategory = compareItems[0].category_id;
+      const newProductCategory = product.category_id;
+
+      if (
+        firstItemCategory &&
+        newProductCategory &&
+        String(firstItemCategory) !== String(newProductCategory)
+      ) {
+        toast.error('შედარებაში შეგიძლიათ დაამატოთ მხოლოდ ერთი და იმავე კატეგორიის პროდუქტები!');
+        return;
+      }
+    }
+
+    // 4. წამოიღოს განახლებული პროდუქტი ბექენდიდან მიმდინარე ენით
     const fetchedProduct = await fetchProductDetails(productId);
     const newProduct = fetchedProduct || product;
 
-    setCompareItems(prevItems => {
-      // Check if there are existing items and if the new product is from a different category
-      if (prevItems.length > 0) {
-        const firstItemCategory = prevItems[0].category_id;
-        const newProductCategory = newProduct.category_id;
+    const normalizedProduct = {
+      ...newProduct,
+      id: newProduct.id || productId
+    };
 
-        if (
-          firstItemCategory &&
-          newProductCategory &&
-          String(firstItemCategory) !== String(newProductCategory)
-        ) {
-          return [{ ...newProduct }];
-        }
-      }
-
-      // Normalize product object to ensure it has id field
-      const normalizedProduct = {
-        ...newProduct,
-        id: newProduct.id || productId
-      };
-
-      return [...prevItems, normalizedProduct];
-    });
+    setCompareItems(prevItems => [...prevItems, normalizedProduct]);
   };
 
   const removeFromCompare = productId => {
@@ -144,11 +150,13 @@ export const CompareProvider = ({ children }) => {
 
   const clearCompare = () => {
     setCompareItems([]);
+    if (!isAuthenticated) {
+      localStorage.removeItem('compare');
+    }
   };
 
   const compareCount = compareItems.length;
 
-  // Get the current category being compared
   const getCompareCategory = () => {
     if (compareItems.length === 0) return null;
     return compareItems[0].category_id;
