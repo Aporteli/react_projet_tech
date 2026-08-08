@@ -157,6 +157,7 @@ export const CompareProvider = ({ children }) => {
   return (
     <CompareContext.Provider
       value={{
+        setCompareItems,
         compareItems,
         addToCompare,
         removeFromCompare,

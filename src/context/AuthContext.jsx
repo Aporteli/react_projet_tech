@@ -1,9 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // 1. useState-ის საწყის მნიშვნელობად წავიკითხოთ LocalStorage
+  // 1. useState-ის ინიციალიზაცია (სინქრონულად იღებს მონაცემებს პირველივე რენდერზე)
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem('user');
@@ -18,37 +18,25 @@ export const AuthProvider = ({ children }) => {
     return localStorage.getItem('token') || null;
   });
 
-  const [loading, setLoading] = useState(true);
-
-  // 2. გვერდის პირველადი ჩატვირთვისას მონაცემების შემოწმება
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('token');
-    if (savedUser && savedUser !== 'undefined' && savedToken) {
-      setUser(JSON.parse(savedUser));
-      setToken(savedToken);
-    }
-    setLoading(false);
-  }, []);
-
-  // 3. Login ფუნქცია — ინახავს მონაცემებს LocalStorage-შიც
+  // 2. Login ფუნქცია
   const login = (userData, userToken) => {
     setUser(userData);
     setToken(userToken);
     if (userData) {
       localStorage.setItem('user', JSON.stringify(userData));
     }
-
     if (userToken) {
       localStorage.setItem('token', userToken);
     }
   };
 
+  // 3. Logout ფუნქცია
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     localStorage.removeItem('wishlist');
     localStorage.removeItem('cart');
+    localStorage.removeItem('compare'); // დავამატოთ compare-ც
     setUser(null);
     setToken(null);
   };
@@ -57,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

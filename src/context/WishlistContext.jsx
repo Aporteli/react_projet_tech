@@ -68,6 +68,7 @@ export const WishlistProvider = ({ children }) => {
   return (
     <WishlistContext.Provider
       value={{
+        setWishlistItems,
         wishlistItems,
         addToWishlist,
         removeFromWishlist,

@@ -12,48 +12,40 @@ import Compare from './pages/compare';
 import SearchResults from './pages/searchResults/searchResults';
 import User from './pages/user/User';
 import SingleProduct from './pages/singleProduct/singleProduct';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
-import { CompareProvider } from './context/CompareContext';
+import { useAppSync } from './hooks/useAppSync';
+import { useAuth } from './context/AuthContext';
+
 function App() {
+  const { user } = useAuth();
+  useAppSync(user);
+
   return (
-    <AuthProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <CompareProvider>
-            <div>
-              <BrowserRouter>
-                <ScrollToTop />
-                <Routes>
-                  <Route path="/" element={<Layout />}>
-                    <Route index element={<Home />} />
-                    <Route path="/aboutus" element={<Aboutus />} />
-                    <Route path="/category/:slug" element={<CategoryPage />} />
-                    <Route path="/s/:slug" element={<SubCategoryPage />} />
-                    <Route path="/admin/add-product" element={<AdminAddProduct />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/wishlist" element={<Wishlist />} />
-                    <Route path="/compare" element={<Compare />} />
-                    <Route path="/search" element={<SearchResults />} />
-                    <Route path="/user" element={<User />} />
-                    <Route path="/product/:id" element={<SingleProduct />} />
-                    <Route
-                      path="*"
-                      element={
-                        <div style={{ padding: '50px', textAlign: 'center' }}>
-                          გვერდი ვერ მოიძებნა! ❌
-                        </div>
-                      }
-                    />
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </div>
-          </CompareProvider>
-        </WishlistProvider>
-      </CartProvider>
-    </AuthProvider>
+    <div>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="/aboutus" element={<Aboutus />} />
+            <Route path="/category/:slug" element={<CategoryPage />} />
+            <Route path="/s/:slug" element={<SubCategoryPage />} />
+            <Route path="/admin/add-product" element={<AdminAddProduct />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/compare" element={<Compare />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/user" element={<User />} />
+            <Route path="/product/:id" element={<SingleProduct />} />
+            <Route
+              path="*"
+              element={
+                <div style={{ padding: '50px', textAlign: 'center' }}>გვერდი ვერ მოიძებნა! ❌</div>
+              }
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

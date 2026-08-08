@@ -29,7 +29,11 @@ export const WishlistTooltip = () => {
     <>
       <div className={styles.hiddenDiv}></div>
       <div className={styles.tooltip}>
-        <p className={styles.title}>{t('tooltip.wishlist.title')}</p>
+        <p className={wishlistItems.length > 0 ? styles.title : styles.titleDefault}>
+          {wishlistItems.length > 0
+            ? t('tooltip.wishlist.YourList')
+            : t('tooltip.wishlist.title')}{' '}
+        </p>
         <div className={styles.wishlistItems}>
           {wishlistItems.map(item => {
             const currentPrice =
@@ -38,7 +42,11 @@ export const WishlistTooltip = () => {
                 : Number(item.price);
             return (
               <div key={item.id} className={styles.wishlistItem}>
-                <img className={styles.itemImage} src={`${BASE_URL}/uploads/${item.image}`} alt={item.name} />
+                <img
+                  className={styles.itemImage}
+                  src={`${BASE_URL}/uploads/${item.image}`}
+                  alt={item.name}
+                />
                 <div className={styles.itemDetails}>
                   <h4 className={styles.itemName}>{item.name}</h4>
                   <p className={styles.itemPrice}>{currentPrice} ₾</p>

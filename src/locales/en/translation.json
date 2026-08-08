@@ -25,7 +25,8 @@
       "title": "Your wishlist is empty",
       "subtitle": "Add items in order to purchase them",
       "button": "Open wishlist",
-      "viewWishlist": "View Wishlist"
+      "viewWishlist": "View Wishlist",
+      "YourList": "Whishlist"
     },
     "compare": {
       "title": "Your compare list is empty",
